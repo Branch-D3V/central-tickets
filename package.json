@@ -18,6 +18,8 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.70.0",
     "react-icons": "^5.5.0",
+    "react-pro-sidebar": "^1.1.0",
+    "react-responsive-carousel": "^3.2.23",
     "yup": "^1.7.1"
   },
   "devDependencies": {
