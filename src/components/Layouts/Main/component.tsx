@@ -3,6 +3,7 @@
 import { Stack } from "@chakra-ui/react";
 import React from "react";
 import HeaderComponent from "../Header";
+import AgeModal from "@/components/Modals/AgeModal";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,6 +26,7 @@ function MainLayout({ children }: { children: React.ReactNode }) {
       />
       <HeaderComponent />
       {children}
+      <AgeModal />
     </Stack>
   );
 }

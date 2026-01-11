@@ -20,8 +20,9 @@ import {
 
 import { keyframes } from "@emotion/react";
 import { CardMedia } from "../Cards/CardMedia/component";
+import { thumbnailsPictures } from "@/data/thumbnails";
 
-export default function AuthPage() {
+export default function DashboardComponent() {
   const fadeUp = keyframes`
     from {
       opacity: 0;
@@ -33,17 +34,10 @@ export default function AuthPage() {
     }
   `;
 
-  const thumbnails = [
-    "/assets/banner/1.webp",
-    "/assets/banner/2.webp",
-    "/assets/banner/3.webp",
-    "/assets/banner/4.webp",
-  ];
-
   const fakeGrid = (
     <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} gap={3}>
       {Array.from({ length: 10 }).map((_, index) => {
-        const bgImage = thumbnails[index % thumbnails.length];
+        const bgImage = thumbnailsPictures[index % thumbnailsPictures.length];
 
         return (
           <Box
@@ -156,26 +150,6 @@ export default function AuthPage() {
                 </Text>
                 <RiVerifiedBadgeFill color="#44FF7D" />
               </HStack>
-              {/* <HStack justify={"center"} gap={4}>
-                <HStack gap={1} alignContent={"center"}>
-                  <FaRegImage />
-                  <Text fontSize="sm" color="gray.500">
-                    429
-                  </Text>
-                </HStack>
-                <HStack gap={1} alignContent={"center"}>
-                  <MdOndemandVideo />
-                  <Text fontSize="sm" color="gray.500">
-                    350
-                  </Text>
-                </HStack>{" "}
-                <HStack gap={1} alignContent={"center"}>
-                  <IoIosHeart />
-                  <Text fontSize="sm" color="gray.500">
-                    31.8K
-                  </Text>
-                </HStack>
-              </HStack> */}
             </Stack>
             <Text
               fontSize="sm"

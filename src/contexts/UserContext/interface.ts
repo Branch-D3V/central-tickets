@@ -1,0 +1,20 @@
+import { User } from '@/interfaces/User/User';
+import { LoginSchemaType } from '@/schemas/loginSchema';
+
+export interface UserContextProps {
+  login: (params: LoginSchemaType) => Promise<LoginAuthenticated>;
+  logout: () => Promise<void>;
+  isLoadingLogin: boolean;
+  isAuthenticated: boolean;
+  // isLoadingPages: boolean;
+  user: User;
+}
+
+export interface UserProviderProps {
+  children: React.ReactNode;
+}
+
+export interface LoginAuthenticated {
+  token: string;
+  user: User;
+}

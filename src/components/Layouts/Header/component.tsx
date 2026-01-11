@@ -1,15 +1,12 @@
 "use client";
 
-import { ColorModeButton } from "@/components/ui/color-mode";
 import {
-  Box,
+  Avatar,
   CloseButton,
-  Container,
   Drawer,
   Heading,
   HStack,
   IconButton,
-  Link,
   Portal,
   Stack,
   Text,
@@ -17,14 +14,25 @@ import {
 } from "@chakra-ui/react";
 import { HeaderComponentProps } from "./interface";
 import { IoMdLogIn, IoMdPersonAdd, MdOutlineMenu } from "@/components/Icons";
-import NextLink from "next/link";
 import { defaultNavigation } from "@/data/defaultNavigation";
 import ButtonAction from "@/components/Buttons/Action";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { LinkComponent } from "@/components/Link";
+import { useUser } from "@/contexts/UserContext";
+import React from "react";
 
 export function HeaderComponent({}: HeaderComponentProps) {
   const isBreaking = useBreakpointValue({ base: true, lg: false });
   const router = useRouter();
+  const pathname = usePathname();
+
+  const { isAuthenticated, user } = useUser();
+
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <Stack
@@ -43,14 +51,19 @@ export function HeaderComponent({}: HeaderComponentProps) {
       boxShadow="0 4px 10px rgba(0,0,0,0.1)"
       transition="background-color 0.2s ease"
     >
-      <Container maxW="8xl" h="full">
+      <Stack maxW="full" h="full" pl={{ md: 6 }}>
         <HStack w="full" h="full" justifyContent="space-between">
           {!isBreaking ? (
-            <Heading size="md">Logo</Heading>
+            <Heading size="md">Andressa Urach</Heading>
           ) : (
-            <Drawer.Root placement={"start"}>
+            <Drawer.Root placement={"start"} open={open}>
               <Drawer.Trigger asChild>
-                <IconButton aria-label="menu" variant="plain" size={"2xl"}>
+                <IconButton
+                  onClick={() => setOpen(true)}
+                  aria-label="menu"
+                  variant="plain"
+                  size={"2xl"}
+                >
                   <MdOutlineMenu />
                 </IconButton>
               </Drawer.Trigger>
@@ -59,20 +72,56 @@ export function HeaderComponent({}: HeaderComponentProps) {
                 <Drawer.Positioner>
                   <Drawer.Content>
                     <Drawer.Header>
-                      <Drawer.Title>Olá, seja bem vindo!</Drawer.Title>
+                      <Drawer.Title>
+                        Olá,
+                        {isAuthenticated
+                          ? user.name?.split(" ")[0]
+                          : "seja bem vindo"}
+                        !
+                      </Drawer.Title>
                     </Drawer.Header>
                     <Drawer.Body>
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
-                      </p>
+                      <Stack>
+                        {defaultNavigation.map((item, index) => (
+                          <LinkComponent
+                            borderBottom={
+                              pathname === item.value
+                                ? "5px solid #FF0080"
+                                : "none"
+                            }
+                            key={index}
+                            h={"40px"}
+                            fontSize={"20px"}
+                            fontStyle={"italic"}
+                            href={item.value}
+                            label={item.label}
+                            _hover={{
+                              borderBottom: "5px solid #FF0080",
+                            }}
+                          />
+                        ))}
+                      </Stack>
                     </Drawer.Body>
-                    <Drawer.Footer>
-                      <Text>Perfil</Text>
+                    <Drawer.Footer
+                      borderTop="1px solid"
+                      borderColor="#FF0080"
+                      mt={4}
+                    >
+                      <HStack w="full" key={user.email} gap="4">
+                        <Avatar.Root>
+                          <Avatar.Fallback name={user.name} />
+                          <Avatar.Image src={user.avatar} />
+                        </Avatar.Root>
+                        <Stack gap="0">
+                          <Text fontWeight="medium">{user.name}</Text>
+                          <Text color="fg.muted" textStyle="sm">
+                            {user.email}
+                          </Text>
+                        </Stack>
+                      </HStack>
                     </Drawer.Footer>
                     <Drawer.CloseTrigger asChild>
-                      <CloseButton size="sm" />
+                      <CloseButton size="sm" onClick={() => setOpen(false)} />
                     </Drawer.CloseTrigger>
                   </Drawer.Content>
                 </Drawer.Positioner>
@@ -83,57 +132,74 @@ export function HeaderComponent({}: HeaderComponentProps) {
           {!isBreaking && (
             <HStack w={"full"} justifyContent="center" gap={8} maxW={"500px"}>
               {defaultNavigation.map((item, index) => (
-                <Link
-                  as={NextLink}
+                <LinkComponent
+                  borderBottom={
+                    pathname === item.value ? "5px solid #FF0080" : "none"
+                  }
                   key={index}
-                  transition="0.3s"
-                  alignContent={"center"}
                   h={"80px"}
+                  fontSize={"16px"}
+                  fontStyle={"italic"}
+                  href={item.value}
+                  label={item.label}
                   _hover={{
                     borderBottom: "5px solid #FF0080",
                   }}
-                  href={item.value}
-                  textDecoration={"none"}
-                >
-                  {item.label}
-                </Link>
+                />
               ))}
             </HStack>
           )}
 
-          <HStack gap={0}>
-            <ButtonAction
-              onClick={() => router.push("/login")}
-              variant={"plain"}
-              h={"80px"}
-              color={"white"}
-              fontSize={"16px"}
-              borderRadius={"0px"}
-              rightIcon={<IoMdLogIn />}
-              bg={"#FF0080"}
-              _hover={{
-                bg: "#C30061",
-              }}
-            >
-              Login
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => router.push("/cadastro")}
-              variant={"plain"}
-              fontSize={"16px"}
-              h={"80px"}
-              borderRadius={"0px"}
-              color={"#FF0080"}
-              _hover={{
-                borderX: "1px solid #FF0080",
-              }}
-              rightIcon={<IoMdPersonAdd />}
-            >
-              Registrar-se
-            </ButtonAction>
-          </HStack>
+          {isAuthenticated ? (
+            <HStack key={user.email} gap="4">
+              <Avatar.Root size="xl">
+                <Avatar.Fallback name={user.name} />
+                <Avatar.Image src={user.avatar} />
+              </Avatar.Root>
+              {!isBreaking && <Text fontWeight="medium">{user.name}</Text>}
+            </HStack>
+          ) : (
+            <HStack gap={0}>
+              <ButtonAction
+                onClick={() => router.push("/login")}
+                variant={"plain"}
+                h={"80px"}
+                fontSize={"16px"}
+                borderRadius={"0px"}
+                rightIcon={<IoMdLogIn />}
+                bg={pathname === "/login" ? "#FF0080" : "none"}
+                color={pathname === "/login" ? "white" : "#FF0080"}
+                _hover={{
+                  bg: "#C30061",
+                  color: "white",
+                }}
+              >
+                {!isBreaking ? "Login" : pathname === "/login" ? "Login" : ""}
+              </ButtonAction>
+              <ButtonAction
+                onClick={() => router.push("/cadastro")}
+                variant={"plain"}
+                fontSize={"16px"}
+                h={"80px"}
+                borderRadius={"0px"}
+                bg={pathname === "/cadastro" ? "#FF0080" : "white"}
+                color={pathname === "/cadastro" ? "white" : "#FF0080"}
+                _hover={{
+                  bg: "#C30061",
+                  color: "white",
+                }}
+                rightIcon={<IoMdPersonAdd />}
+              >
+                {!isBreaking
+                  ? "Registrar-se"
+                  : pathname === "/cadastro"
+                  ? "Registrar-se"
+                  : ""}
+              </ButtonAction>
+            </HStack>
+          )}
         </HStack>
-      </Container>
+      </Stack>
     </Stack>
   );
 }

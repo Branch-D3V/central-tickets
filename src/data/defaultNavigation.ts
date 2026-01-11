@@ -19,10 +19,10 @@ const defaultNavigation: Array<NavigationItem> = [
     value: "/planos",
     label: "Planos",
   },
-  {
-    value: "/sobre",
-    label: "Sobre mim",
-  },
+  // {
+  //   value: "/sobre",
+  //   label: "Sobre mim",
+  // },
 ];
 
 export { defaultNavigation };

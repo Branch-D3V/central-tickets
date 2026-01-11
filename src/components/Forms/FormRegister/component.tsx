@@ -17,7 +17,9 @@ import ButtonAction from "@/components/Buttons/Action";
 import Image from "next/image";
 import { registerSchema, RegisterSchemaType } from "@/schemas/registerSchema";
 import { keyframes } from "@emotion/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
+import React from "react";
 
 export default function FormRegister({}: FormRegisterProps) {
   const {
@@ -27,6 +29,8 @@ export default function FormRegister({}: FormRegisterProps) {
   } = useForm({
     resolver: yupResolver(registerSchema),
   });
+
+  const { isAuthenticated } = useUser();
 
   const router = useRouter();
 
@@ -44,6 +48,12 @@ export default function FormRegister({}: FormRegisterProps) {
   const handleSubmitForm = (data: RegisterSchemaType) => {
     console.log(data);
   };
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      redirect("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Stack

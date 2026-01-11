@@ -10,7 +10,10 @@ import InputPassword from "@/components/FormControl/InputPassword";
 import { loginSchema, LoginSchemaType } from "@/schemas/loginSchema";
 import ButtonAction from "@/components/Buttons/Action";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { LinkComponent } from "@/components/Link";
+import React from "react";
+import { useUser } from "@/contexts/UserContext";
 
 export default function FormLogin({}: FormLoginProps) {
   const {
@@ -21,11 +24,19 @@ export default function FormLogin({}: FormLoginProps) {
     resolver: yupResolver(loginSchema),
   });
 
+  const { isAuthenticated } = useUser();
+
   const router = useRouter();
 
   const handleSubmitForm = (data: LoginSchemaType) => {
     console.log(data);
   };
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      redirect("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Stack
@@ -72,6 +83,13 @@ export default function FormLogin({}: FormLoginProps) {
           error={errors.password}
           placeholder="Senha"
           {...register("password")}
+        />
+        <LinkComponent
+          fontSize={"16px"}
+          alignSelf={"end"}
+          color={"#FF0080"}
+          href={"/recuperacao"}
+          label="Esqueceu a senha?"
         />
       </Stack>
       <Stack w={"full"}>
