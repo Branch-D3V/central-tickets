@@ -32,14 +32,6 @@ export default function FormPersonalInfo({}: FormPersonalInfoProps) {
   const token = getTokenClient();
 
   const handleSubmitForm = async (data: UpdateProfileSchemaType) => {
-    // const updatedFields: Partial<UpdateProfileSchemaType> = {};
-    // (Object.keys(dirtyFields) as Array<keyof UpdateProfileSchemaType>).forEach(
-    //   (key) => {
-    //     updatedFields[key] = data[key];
-    //   }
-    // );
-    // console.log(updatedFields);
-
     await request(`/api/auth/user/`, {
       method: "PUT",
       body: { ...data, userId: user.id },
