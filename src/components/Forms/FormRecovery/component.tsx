@@ -45,10 +45,10 @@ export default function FormRecovery({}: FormRecoveryProps) {
     await request("/api/auth/recovery", {
       method: "POST",
       body: data,
+    }).then(() => {
+      setSend(true);
+      reset();
     });
-    console.log(data);
-    setSend(true);
-    reset();
   };
 
   React.useEffect(() => {
