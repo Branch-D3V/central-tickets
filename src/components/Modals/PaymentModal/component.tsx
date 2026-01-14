@@ -74,7 +74,6 @@ export default function PaymentModal({
 
   const handlePayment = async (data: PaymentSchemaType) => {
     data.currency = "BRL";
-    console.log(data);
     let formData = {};
     if (paymentMethod === "boleto") {
       data.boleto.expiresInDays = 3;
@@ -171,9 +170,6 @@ export default function PaymentModal({
     }
   }, [isAuthenticated, isLoadingPages]);
 
-  console.log(isAuthenticated);
-  console.log(watch());
-
   return (
     <Dialog.Root open={open} placement="center" modal>
       <Portal>
@@ -244,11 +240,13 @@ export default function PaymentModal({
                   <Stack>
                     <HStack>
                       <Input
+                        type="number"
                         placeholder="Número do cartão"
                         {...register("card.number")}
                         error={errors.card?.number}
                       />
                       <Input
+                        type="number"
                         placeholder="CVV"
                         {...register("card.cvv")}
                         error={errors.card?.cvv}
@@ -256,6 +254,7 @@ export default function PaymentModal({
                     </HStack>
                     <Input
                       placeholder="Nome"
+                      type="text"
                       {...register("card.holderName")}
                       error={errors.card?.holderName}
                     />
