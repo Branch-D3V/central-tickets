@@ -242,13 +242,25 @@ export default function PaymentModal({
                       <Input
                         type="number"
                         placeholder="Número do cartão"
-                        {...register("card.number")}
+                        {...register("card.number", {
+                          onChange: (e) => {
+                            e.target.value = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 16);
+                          },
+                        })}
                         error={errors.card?.number}
                       />
                       <Input
                         type="number"
                         placeholder="CVV"
-                        {...register("card.cvv")}
+                        {...register("card.cvv", {
+                          onChange: (e) => {
+                            e.target.value = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 4);
+                          },
+                        })}
                         error={errors.card?.cvv}
                       />
                     </HStack>
@@ -263,7 +275,15 @@ export default function PaymentModal({
                         placeholder="MM"
                         maxLength={2}
                         type="number"
-                        {...register("card.expirationMonth")}
+                        {...register("card.expirationMonth", {
+                          onChange: (e) => {
+                            let value = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 2);
+                            if (Number(value) > 12) value = "12";
+                            e.target.value = value;
+                          },
+                        })}
                         error={errors.card?.expirationMonth}
                       />{" "}
                       /
@@ -271,7 +291,13 @@ export default function PaymentModal({
                         maxLength={4}
                         type="number"
                         placeholder="YYYY"
-                        {...register("card.expirationYear")}
+                        {...register("card.expirationYear", {
+                          onChange: (e) => {
+                            e.target.value = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 4);
+                          },
+                        })}
                         error={errors.card?.expirationYear}
                       />
                     </HStack>
