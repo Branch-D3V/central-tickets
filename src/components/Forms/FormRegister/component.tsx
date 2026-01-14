@@ -20,17 +20,22 @@ import { keyframes } from "@emotion/react";
 import { redirect, useRouter } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
 import React from "react";
+import useFetch from "@/hooks/useFetch/hook";
+import { toaster } from "@/components/ui/toaster";
+import { User } from "@/interfaces/User/User";
 
 export default function FormRegister({}: FormRegisterProps) {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(registerSchema),
   });
 
   const { isAuthenticated } = useUser();
+  const [request, isLoading, data] = useFetch<User>();
 
   const router = useRouter();
 
@@ -45,8 +50,34 @@ export default function FormRegister({}: FormRegisterProps) {
       }
     `;
 
-  const handleSubmitForm = (data: RegisterSchemaType) => {
-    console.log(data);
+  const handleSubmitForm = async (data: RegisterSchemaType) => {
+    await request("/api/auth/register", {
+      method: "POST",
+      body: data,
+    })
+      .then(() => {
+        router.push("/login");
+      })
+      .catch((error) => {
+        if (error?.data && typeof error.data === "object") {
+          Object.entries(error.data).forEach(([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              setError(field as keyof RegisterSchemaType, {
+                type: "server",
+                message: messages[0],
+              });
+            }
+          });
+        }
+
+        if (error?.message) {
+          toaster.create({
+            description: error.message,
+            type: "error",
+            closable: true,
+          });
+        }
+      });
   };
 
   React.useEffect(() => {
@@ -144,6 +175,7 @@ export default function FormRegister({}: FormRegisterProps) {
           color={"white"}
           fontSize={"16px"}
           bg={"#FF0080"}
+          loading={isLoading}
           _hover={{
             bg: "#C30061",
             transform: "translate(0px, -2px)",

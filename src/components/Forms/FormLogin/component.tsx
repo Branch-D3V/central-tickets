@@ -24,12 +24,12 @@ export default function FormLogin({}: FormLoginProps) {
     resolver: yupResolver(loginSchema),
   });
 
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, login, isLoadingLogin } = useUser();
 
   const router = useRouter();
 
-  const handleSubmitForm = (data: LoginSchemaType) => {
-    console.log(data);
+  const handleSubmitForm = async (data: LoginSchemaType) => {
+    await login(data);
   };
 
   React.useEffect(() => {
@@ -80,9 +80,9 @@ export default function FormLogin({}: FormLoginProps) {
           {...register("email")}
         />
         <InputPassword
-          error={errors.password}
+          error={errors.senha}
           placeholder="Senha"
-          {...register("password")}
+          {...register("senha")}
         />
         <LinkComponent
           fontSize={"16px"}
@@ -101,6 +101,7 @@ export default function FormLogin({}: FormLoginProps) {
           color={"white"}
           fontSize={"16px"}
           bg={"#FF0080"}
+          loading={isLoadingLogin}
           _hover={{
             bg: "#C30061",
             transform: "translate(0px, -2px)",

@@ -7,4 +7,5 @@ export interface InputProps extends ChakraInputProps {
   isLoading?: boolean;
   isDisabled?: boolean;
   icon?: React.ElementType;
+  required?: boolean;
 }

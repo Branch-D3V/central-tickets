@@ -23,6 +23,7 @@ export function Banner({
       loading={loading === true}
       minH={loading ? "64" : "none"}
       w={"full"}
+      maxW={"1200px"}
     >
       <Box overflow="hidden" h={height ?? defaultHeight} w="full">
         <Box

@@ -6,6 +6,10 @@ import {
   MdOutlineMenu,
   MdKeyboardReturn,
   MdBlock,
+  MdFileUpload,
+  MdLogout,
+  MdCheckCircle,
+  MdWorkspacePremium,
 } from "react-icons/md";
 import { IoIosHeart, IoMdLogIn, IoMdPersonAdd } from "react-icons/io";
 import {
@@ -15,10 +19,13 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiX,
+  FiUploadCloud,
 } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import { HiOutlineIdentification } from "react-icons/hi2";
 import { LuUserRound } from "react-icons/lu";
+import { PiPowerBold } from "react-icons/pi";
+import { SiGoogleanalytics } from "react-icons/si";
 
 export {
   RiVerifiedBadgeFill,
@@ -29,6 +36,10 @@ export {
   MdOutlineMenu,
   MdKeyboardReturn,
   MdBlock,
+  MdFileUpload,
+  MdLogout,
+  MdCheckCircle,
+  MdWorkspacePremium,
   IoIosHeart,
   IoMdLogIn,
   IoMdPersonAdd,
@@ -38,7 +49,10 @@ export {
   FiChevronLeft,
   FiChevronRight,
   FiX,
+  FiUploadCloud,
   RxCross2,
   HiOutlineIdentification,
   LuUserRound,
+  PiPowerBold,
+  SiGoogleanalytics,
 };

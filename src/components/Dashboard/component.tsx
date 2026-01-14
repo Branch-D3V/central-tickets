@@ -3,9 +3,13 @@
 import {
   Avatar,
   Box,
+  Center,
+  GridItem,
   HStack,
   Icon,
+  Image,
   SimpleGrid,
+  Spinner,
   Stack,
   Tabs,
   Text,
@@ -16,13 +20,28 @@ import {
   MdOndemandVideo,
   IoIosHeart,
   FiLock,
+  FaUser,
 } from "@/components/Icons";
 
 import { keyframes } from "@emotion/react";
 import { CardMedia } from "../Cards/CardMedia/component";
-import { thumbnailsPictures } from "@/data/thumbnails";
+import Banner from "../Banner";
+import { defaultBanners } from "@/data/defaultBanners";
+import React from "react";
+import useFetch from "@/hooks/useFetch/hook";
+import { useUser } from "@/contexts/UserContext";
+import { useRouter } from "next/navigation";
+import { SelectionProvider } from "@/providers/selectionProvider";
+import { SelectableItem } from "@/providers/selectableItem";
+import { Media } from "@/interfaces/Media";
+import { AlertMessage } from "../Alert/component";
 
 export default function DashboardComponent() {
+  const [request, , data] = useFetch<Array<Media>>();
+  const { user, isAuthenticated, insight, isLoadingInsight } = useUser();
+
+  const router = useRouter();
+
   const fadeUp = keyframes`
     from {
       opacity: 0;
@@ -34,48 +53,122 @@ export default function DashboardComponent() {
     }
   `;
 
-  const fakeGrid = (
-    <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} gap={3}>
-      {Array.from({ length: 10 }).map((_, index) => {
-        const bgImage = thumbnailsPictures[index % thumbnailsPictures.length];
+  const fakeGrid = (type: string) => {
+    return (
+      <SelectionProvider>
+        {data ? (
+          <Box columnCount={{ base: 1, sm: 2, md: 3, lg: 4 }} columnGap="12px">
+            {data
+              ?.filter((media) => media.tipo === type)
+              ?.map((image, index) => (
+                <Box
+                  key={index}
+                  mb="12px"
+                  breakInside="avoid"
+                  position="relative"
+                  borderRadius="14px"
+                  overflow="hidden"
+                  cursor="pointer"
+                  role="group"
+                  transition="all 0.3s ease"
+                  _hover={{ transform: "translateY(-4px)" }}
+                  onClick={() =>
+                    isAuthenticated && user.status_acesso === true
+                      ? ""
+                      : router.push("/planos")
+                  }
+                >
+                  <Box position="relative" w="100%">
+                    <SelectableItem key={index} id={image.uuid}>
+                      <Image
+                        src={image.url_thumb}
+                        alt={image.titulo ?? "Foto"}
+                        width={800}
+                        height={1200}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          display: "block",
+                          filter: !user.status_acesso ? "blur(20px)" : "none",
+                          transform: "scale(1.05)",
+                          transition: "transform 0.3s ease",
+                        }}
+                        onMouseOver={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.1)")
+                        }
+                        onMouseOut={(e) =>
+                          (e.currentTarget.style.transform = "scale(1.05)")
+                        }
+                      />
+                    </SelectableItem>
 
-        return (
-          <Box
-            key={index}
-            position="relative"
-            w="full"
-            h="140px"
-            borderRadius="12px"
-            overflow="hidden"
-          >
-            <Box
-              w="full"
-              h="full"
-              bgImage={`url(${bgImage})`}
-              bgSize="cover"
-              bgPos="center"
-              filter="blur(10px)"
-              transform="scale(1.1)"
-            />
+                    <Box
+                      position="absolute"
+                      inset={0}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      bg={
+                        !user.status_acesso
+                          ? "rgba(0,0,0,0.6)"
+                          : "rgba(0,0,0,0.25)"
+                      }
+                      transition="background 0.3s"
+                    >
+                      {!user.status_acesso && (
+                        <Icon as={FiLock} boxSize="34px" color="white" />
+                      )}
+                    </Box>
 
-            <Box
-              position="absolute"
-              inset={0}
-              bg="rgba(0,0,0,0.45)"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Icon as={FiLock} boxSize="40px" color="white" opacity={0.9} />
-            </Box>
+                    {image.titulo && (
+                      <Box
+                        position="absolute"
+                        bottom={0}
+                        left={0}
+                        right={0}
+                        px={4}
+                        py={3}
+                        bgGradient="linear(to-t, rgba(0,0,0,0.85), transparent)"
+                      >
+                        <Text
+                          color="white"
+                          fontSize="14px"
+                          fontWeight="semibold"
+                          lineClamp={2}
+                          lineHeight="1.3"
+                        >
+                          {image.titulo}
+                        </Text>
+                      </Box>
+                    )}
+                  </Box>
+                </Box>
+              ))}
           </Box>
-        );
-      })}
-    </SimpleGrid>
-  );
+        ) : (
+          <Stack>
+            <AlertMessage
+              bg={"transparent"}
+              status="info"
+              title="Indisponível"
+              message="Nenhum conteúdo disponível."
+            />
+          </Stack>
+        )}
+      </SelectionProvider>
+    );
+  };
+
+  React.useEffect(() => {
+    request("/api/media", {
+      method: "GET",
+    });
+  }, []);
 
   return (
-    <>
+    <Stack align={"center"}>
+      <Banner data={defaultBanners} />
+
       <Stack
         w="full"
         zIndex={10}
@@ -173,16 +266,32 @@ export default function DashboardComponent() {
             </Text>
           </Stack>
         </Stack>
-        <SimpleGrid
-          zIndex={10}
-          gap={{ base: 2, md: 4 }}
-          columns={{ base: 2, md: 1, lg: 2 }}
-        >
-          <CardMedia icon={FaRegImage} info={429} />
-          <CardMedia icon={MdOndemandVideo} info={350} />
-          <CardMedia icon={IoIosHeart} info={"31.8K"} />
-          <CardMedia icon={FiLock} info={343} />
-        </SimpleGrid>
+        {isLoadingInsight ? (
+          <Center
+            bg={"white"}
+            zIndex={20}
+            w={"full"}
+            maxW={450}
+            borderRadius={"16px"}
+            p={{ base: 6, md: 8 }}
+            gap={8}
+            boxShadow={"0 10px 25px rgba(0,0,0,0.08)"}
+          >
+            <Spinner size="xl" alignSelf="center" color={"#FF0080"} />
+          </Center>
+        ) : (
+          <SimpleGrid
+            zIndex={10}
+            gap={{ base: 2, md: 4 }}
+            columns={{ base: 2, md: 1, lg: 2 }}
+          >
+            <CardMedia icon={FaRegImage} info={insight?.fotos || 0} />
+            <CardMedia icon={MdOndemandVideo} info={insight?.videos || 0} />
+            <GridItem colSpan={{ base: 2, md: 1, lg: 2 }}>
+              <CardMedia icon={FaUser} info={insight?.assinantes || 0} />
+            </GridItem>
+          </SimpleGrid>
+        )}
       </Stack>
       <Stack w={"full"} p={4}>
         <Tabs.Root defaultValue="fotos">
@@ -208,10 +317,10 @@ export default function DashboardComponent() {
               Videos
             </Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content value="fotos">{fakeGrid}</Tabs.Content>
-          <Tabs.Content value="videos">{fakeGrid}</Tabs.Content>
+          <Tabs.Content value="fotos">{fakeGrid("IMAGEM")}</Tabs.Content>
+          <Tabs.Content value="videos">{fakeGrid("VIDEO")}</Tabs.Content>
         </Tabs.Root>
       </Stack>
-    </>
+    </Stack>
   );
 }
