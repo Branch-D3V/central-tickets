@@ -7,11 +7,11 @@ import { Stack } from "@chakra-ui/react";
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider>
-      {/* <SecurityProvider> */}
-      <Stack w={"full"} h={"full"}>
-        {children}
-      </Stack>
-      {/* </SecurityProvider> */}
+      <SecurityProvider>
+        <Stack w={"full"} h={"full"}>
+          {children}
+        </Stack>
+      </SecurityProvider>
     </Provider>
   );
 }
