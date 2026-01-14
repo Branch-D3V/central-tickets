@@ -13,8 +13,10 @@ import { keyframes } from "@emotion/react";
 import React from "react";
 import { redirect } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
+import useFetch from "@/hooks/useFetch/hook";
 
 export default function FormRecovery({}: FormRecoveryProps) {
+  const [request, isLoading] = useFetch();
   const [send, setSend] = React.useState(false);
 
   const { isAuthenticated } = useUser();
@@ -39,7 +41,11 @@ export default function FormRecovery({}: FormRecoveryProps) {
         }
       `;
 
-  const handleSubmitForm = (data: RecoverySchemaType) => {
+  const handleSubmitForm = async (data: RecoverySchemaType) => {
+    await request("/api/auth/recovery", {
+      method: "POST",
+      body: data,
+    });
     console.log(data);
     setSend(true);
     reset();

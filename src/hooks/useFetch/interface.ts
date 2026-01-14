@@ -8,5 +8,4 @@ export interface Options {
 export interface FetchResponse<T> {
   data: T;
   message: string | null;
-  // Colocar a tipagem da paginação quando consultar a API
 }

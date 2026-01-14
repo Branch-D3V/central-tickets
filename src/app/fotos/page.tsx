@@ -11,9 +11,6 @@ export default function PicturesPage() {
       px={2}
       pt={"90px"}
     >
-      <Text fontSize="40px" zIndex={10}>
-        Fotos
-      </Text>
       <PicturesComponent />
     </Stack>
   );

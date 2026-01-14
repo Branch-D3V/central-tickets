@@ -1,5 +1,5 @@
-import VideosComponent from "@/components/VideosComponent";
-import { Stack, Text } from "@chakra-ui/react";
+import VideosComponent from "@/components/Videos";
+import { Stack } from "@chakra-ui/react";
 
 export default function VideosPage() {
   return (
@@ -11,9 +11,6 @@ export default function VideosPage() {
       px={2}
       pt={"90px"}
     >
-      <Text fontSize="40px" zIndex={10}>
-        Videos
-      </Text>
       <VideosComponent />
     </Stack>
   );

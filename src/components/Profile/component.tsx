@@ -1,27 +1,22 @@
 "use client";
 
-import { Stack, Text, Separator, DataList, SimpleGrid } from "@chakra-ui/react";
-import InputPassword from "../FormControl/InputPassword";
-import ButtonAction from "../Buttons/Action";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  changePasswordSchema,
-  ChangePasswordSchemaType,
-} from "@/schemas/changePasswordSchema";
+import { Stack, Text, Separator, Box, HStack, Badge } from "@chakra-ui/react";
+import { useUser } from "@/contexts/UserContext";
+import React from "react";
+import FormPersonalInfo from "../Forms/FormPersonalInfo";
+import FormPassword from "../Forms/FormPassword";
+import { redirect, useRouter } from "next/navigation";
+import { FaCrown, FaUser } from "react-icons/fa";
 
 export default function Profile() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(changePasswordSchema),
-  });
+  const { isAuthenticated, user } = useUser();
+  const router = useRouter();
 
-  const handleChangePassword = (data: ChangePasswordSchemaType) => {
-    console.log(data);
-  };
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      redirect("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Stack
@@ -39,67 +34,55 @@ export default function Profile() {
       <Text fontSize={"25px"} fontWeight={300} alignSelf={"flex-start"}>
         Perfil do usuário
       </Text>
+
+      <Stack w={"full"} gap={6}>
+        <HStack justify="space-between">
+          <HStack>
+            {user?.status_acesso ? <FaCrown size={22} /> : <FaUser size={22} />}
+            <Text fontSize="lg" fontWeight="bold">
+              Status da Conta
+            </Text>
+          </HStack>
+
+          <Badge
+            px={3}
+            py={1}
+            borderRadius="full"
+            bg={user?.status_acesso ? "whiteAlpha.300" : "gray.300"}
+            color={user?.status_acesso ? "white" : "gray.700"}
+          >
+            {user?.status_acesso ? "Premium" : "Gratuita"}
+          </Badge>
+        </HStack>
+
+        <Text fontSize="sm" opacity={0.9}>
+          {user?.status_acesso
+            ? "Você tem acesso a todos os recursos exclusivos da plataforma."
+            : "Atualize para Premium e desbloqueie todos os recursos."}
+        </Text>
+
+        <Box
+          onClick={() => router.push("/planos")}
+          textAlign={"center"}
+          bgColor={"gray.100"}
+          p={3}
+          borderRadius="12px"
+        >
+          <Text fontSize="sm" fontWeight="medium">
+            {user?.status_acesso
+              ? "✔ Conteúdos exclusivos liberados"
+              : "🔒 Conteúdos exclusivos bloqueados"}
+          </Text>
+        </Box>
+      </Stack>
       <Stack w={"full"} gap={6}>
         <Text fontSize={"18px"}>Informações pessoais</Text>
-        <DataList.Root orientation="horizontal">
-          <DataList.Item>
-            <DataList.ItemLabel>Nome</DataList.ItemLabel>
-            <DataList.ItemValue>João da Silva</DataList.ItemValue>
-          </DataList.Item>
-          <Separator />
-          <DataList.Item>
-            <DataList.ItemLabel>Email</DataList.ItemLabel>
-            <DataList.ItemValue>joao.silva@example.com</DataList.ItemValue>
-          </DataList.Item>
-        </DataList.Root>
+        <FormPersonalInfo />
       </Stack>
       <Separator w={"full"} borderColor="#FF0080" />
-      <Stack
-        w={"full"}
-        gap={6}
-        as={"form"}
-        onSubmit={handleSubmit(handleChangePassword)}
-      >
+      <Stack w={"full"} gap={6}>
         <Text fontSize={"18px"}>Alterar Senha</Text>
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={2}>
-          <InputPassword
-            {...register("senha_atual")}
-            error={errors.senha_atual}
-            _placeholder={{
-              fontSize: "14px",
-            }}
-            placeholder="Senha atual"
-          />
-          <InputPassword
-            {...register("senha")}
-            error={errors.senha}
-            _placeholder={{
-              fontSize: "14px",
-            }}
-            placeholder="Nova senha"
-          />
-          <InputPassword
-            {...register("senha_comp")}
-            error={errors.senha_comp}
-            _placeholder={{
-              fontSize: "14px",
-            }}
-            placeholder="Confirmar nova senha"
-          />
-        </SimpleGrid>
-        <ButtonAction
-          type="submit"
-          variant={"plain"}
-          color={"white"}
-          fontSize={"16px"}
-          bg={"#FF0080"}
-          _hover={{
-            bg: "#C30061",
-            transform: "translate(0px, -2px)",
-          }}
-        >
-          Salvar alterações
-        </ButtonAction>
+        <FormPassword />
       </Stack>
     </Stack>
   );

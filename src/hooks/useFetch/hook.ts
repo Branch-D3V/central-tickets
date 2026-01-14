@@ -3,9 +3,21 @@
 import React from "react";
 import { useLoading } from "../useLoading/hook";
 import { FetchResponse, Options } from "./interface";
+import { Meta } from "@/interfaces/Meta";
+
+const defaultPagination: Meta["meta"] = {
+  count: 0,
+  page: 1,
+  next: null,
+  previous: null,
+  total_pages: 0,
+  total_results: 0,
+};
 
 export default function useFetch<T>() {
   const [data, setData] = React.useState<T>();
+  const [pagination, setPagination] =
+    React.useState<Meta["meta"]>(defaultPagination);
   const { executeWithLoading, isLoading } = useLoading();
 
   const request = async (
@@ -25,8 +37,10 @@ export default function useFetch<T>() {
     }
 
     const headers: HeadersInit = {
-      "Content-Type": "application/json",
       Accept: "application/json",
+      ...(options.body instanceof FormData
+        ? {}
+        : { "Content-Type": "application/json" }),
       ...(options.headers || {}),
     };
 
@@ -36,30 +50,41 @@ export default function useFetch<T>() {
     };
 
     if (options.method !== "GET" && options.body) {
-      config.body = JSON.stringify(options.body);
+      if (options.body instanceof FormData) {
+        config.body = options.body;
+      } else {
+        config.body = JSON.stringify(options.body);
+      }
     }
 
     try {
+      // startLoading();
       const response = await executeWithLoading(() =>
         fetch(`${url}?${params.toString()}`, config)
       );
-      if (!response.ok) {
-        const error = await response.json();
-        return Promise.reject(new Error(error.message || "Fetch error"));
-      }
 
       const responseData = await response.json();
-      setData(responseData);
-      return Promise.resolve({
-        ...responseData,
-        message: responseData.message || null,
-      });
-    } catch (error: unknown) {
+
+      if (!response.ok) {
+        throw new Error(responseData?.message || "Fetch error");
+      }
+
+      setData(responseData.data as T);
+      setPagination(responseData.meta || defaultPagination);
+
+      return {
+        data: responseData.data,
+        message: responseData.message ?? null,
+      };
+    } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";
-      return Promise.reject(new Error(errorMessage));
+
+      throw new Error(errorMessage);
+    } finally {
+      // stopLoading();
     }
   };
 
-  return [request, isLoading, data] as const;
+  return [request, isLoading, data, pagination] as const;
 }
