@@ -1,3 +1,2 @@
-export interface FormLoginProps {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+export interface FormLoginProps {}

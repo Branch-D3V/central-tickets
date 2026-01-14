@@ -21,6 +21,7 @@ const InputBase = (
     placeholder,
     bg = "#F0F0F0",
     border = "none",
+    required = false,
     ...rest
   }: InputProps,
   ref: React.ForwardedRef<HTMLInputElement>
@@ -32,6 +33,12 @@ const InputBase = (
           <Text fontWeight={600} fontSize={16} lineHeight={"24px"}>
             {label}
           </Text>
+          {required && (
+            <Text as="span" color="red.500">
+              {" "}
+              *
+            </Text>
+          )}
         </Field.Label>
       )}
       <InputGroup

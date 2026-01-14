@@ -1,2 +1,2 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-export interface AuthPageProps {}
+export interface DashboardComponentProps {}

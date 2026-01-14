@@ -10,8 +10,12 @@ import InputPassword from "@/components/FormControl/InputPassword";
 import { loginSchema, LoginSchemaType } from "@/schemas/loginSchema";
 import ButtonAction from "@/components/Buttons/Action";
 import Image from "next/image";
+import { redirect, useRouter } from "next/navigation";
+import { LinkComponent } from "@/components/Link";
+import React from "react";
+import { useUser } from "@/contexts/UserContext";
 
-export default function FormLogin({ setStep }: FormLoginProps) {
+export default function FormLogin({}: FormLoginProps) {
   const {
     register,
     handleSubmit,
@@ -20,18 +24,31 @@ export default function FormLogin({ setStep }: FormLoginProps) {
     resolver: yupResolver(loginSchema),
   });
 
-  const handleSubmitForm = (data: LoginSchemaType) => {
-    console.log(data);
+  const { isAuthenticated, login, isLoadingLogin } = useUser();
+
+  const router = useRouter();
+
+  const handleSubmitForm = async (data: LoginSchemaType) => {
+    await login(data);
   };
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      redirect("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Stack
       maxW={"500px"}
+      w={"full"}
+      h={"360px"}
       bg="white"
       borderRadius="10px"
-      p={8}
+      p={{ base: 4, md: 8 }}
+      zIndex={10}
       align={"center"}
-      justify={"center"}
+      justify={"space-evenly"}
       boxShadow="rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px"
       as={"form"}
       onSubmit={handleSubmit(handleSubmitForm)}
@@ -55,49 +72,61 @@ export default function FormLogin({ setStep }: FormLoginProps) {
           style={{ transform: "rotate(-30deg)" }}
         />
       </HStack>
-      <Input
-        error={errors.email}
-        placeholder="E-mail"
-        icon={MdOutlineEmail}
-        {...register("email")}
-      />
-      <InputPassword
-        error={errors.password}
-        placeholder="Senha"
-        {...register("password")}
-      />
-      <ButtonAction
-        borderRadius={"full"}
-        w={"full"}
-        type="submit"
-        variant={"plain"}
-        color={"white"}
-        fontSize={"16px"}
-        bg={"#FF0080"}
-        _hover={{
-          bg: "#C30061",
-          transform: "translate(0px, -2px)",
-        }}
-        rightIcon={<IoMdLogIn />}
-      >
-        Entrar
-      </ButtonAction>
-      <ButtonAction
-        borderRadius={"full"}
-        w={"full"}
-        onClick={() => setStep(2)}
-        variant={"plain"}
-        fontSize={"16px"}
-        borderColor={"#FF0080"}
-        color={"#FF0080"}
-        _hover={{
-          borderColor: "#C30061",
-          transform: "translate(0px, -2px)",
-        }}
-        rightIcon={<IoMdPersonAdd />}
-      >
-        Criar uma conta
-      </ButtonAction>
+      <Stack w={"full"}>
+        <Input
+          error={errors.email}
+          placeholder="E-mail"
+          icon={MdOutlineEmail}
+          {...register("email")}
+        />
+        <InputPassword
+          error={errors.senha}
+          placeholder="Senha"
+          {...register("senha")}
+        />
+        <LinkComponent
+          fontSize={"16px"}
+          alignSelf={"end"}
+          color={"#FF0080"}
+          href={"/recuperacao"}
+          label="Esqueceu a senha?"
+        />
+      </Stack>
+      <Stack w={"full"}>
+        <ButtonAction
+          borderRadius={"full"}
+          w={"full"}
+          type="submit"
+          variant={"plain"}
+          color={"white"}
+          fontSize={"16px"}
+          bg={"#FF0080"}
+          loading={isLoadingLogin}
+          _hover={{
+            bg: "#C30061",
+            transform: "translate(0px, -2px)",
+          }}
+          rightIcon={<IoMdLogIn />}
+        >
+          Entrar
+        </ButtonAction>
+        <ButtonAction
+          borderRadius={"full"}
+          w={"full"}
+          onClick={() => router.push("/cadastro")}
+          variant={"plain"}
+          fontSize={"16px"}
+          borderColor={"#FF0080"}
+          color={"#FF0080"}
+          _hover={{
+            borderColor: "#C30061",
+            transform: "translate(0px, -2px)",
+          }}
+          rightIcon={<IoMdPersonAdd />}
+        >
+          Criar uma conta
+        </ButtonAction>
+      </Stack>
     </Stack>
   );
 }
