@@ -44,7 +44,7 @@ export default function PaymentModal({
   const paymentMethods = [
     { label: "PIX", value: "pix" },
     { label: "Cartão", value: "credit_card" },
-    { label: "Boleto", value: "boleto" },
+    // { label: "Boleto", value: "boleto" },
   ];
 
   const token = getTokenClient();
@@ -94,7 +94,11 @@ export default function PaymentModal({
       };
       await window.Marchabb.setPublicKey(process.env.NEXT_PUBLIC_KEY!);
       const tokenCard = await window.Marchabb.encrypt(card);
-      formData = { ...data, card: { ...data.card, hash: tokenCard } };
+      formData = {
+        ...data,
+        installments: 1,
+        card: { ...data.card, hash: tokenCard },
+      };
     }
     await request("/api/payment/", {
       method: "POST",
@@ -114,8 +118,10 @@ export default function PaymentModal({
               : "Boleto gerado com sucesso!",
           type: "success",
         });
-        // setOpen(false);
-        onSuccess?.();
+        if (paymentMethod === "credit_card") {
+          setOpen(false);
+          handleValidateToken();
+        }
       })
       .catch(({ message }) => {
         toaster.create({
