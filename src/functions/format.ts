@@ -1,6 +1,6 @@
 export function safeNumber(value: string | number): number {
   const numberValue = parseFloat(String(value));
-  return isNaN(numberValue) ? 0 : numberValue;
+  return isNaN(numberValue) ? 0 : numberValue / 100;
 }
 
 export function formatMoney(
