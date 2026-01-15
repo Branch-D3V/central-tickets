@@ -57,6 +57,11 @@ export default function FormRegister({}: FormRegisterProps) {
     })
       .then(() => {
         router.push("/login");
+        toaster.create({
+          description: "Cadastro realizado com sucesso!",
+          type: "success",
+          closable: true,
+        });
       })
       .catch((error) => {
         if (error?.data && typeof error.data === "object") {
