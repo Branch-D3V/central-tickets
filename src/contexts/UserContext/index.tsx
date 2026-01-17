@@ -16,7 +16,8 @@ const UserContext = React.createContext<UserContextProps>({
   isLoadingLogin: true,
   isLoadingPages: true,
   isLoadingInsight: true,
-  login: async () => ({} as User),
+  isLoadingValidateToken: true,
+  login: async () => ({}) as User,
   logout: async () => {},
   handleValidateToken: async () => {},
   user: {} as User,
@@ -25,7 +26,7 @@ const UserContext = React.createContext<UserContextProps>({
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [requestLogin, isLoadingLogin] = useFetch<User>();
-  const [requestValidateToken] = useFetch<User>();
+  const [requestValidateToken, isLoadingValidateToken] = useFetch<User>();
   const [requestInsight, isLoadingInsight] = useFetch<Insight>();
   const [isLoadingPages, setLoadingPages] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<User>(initialUser());
@@ -111,6 +112,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         isAuthenticated,
         isLoadingLogin,
         isLoadingInsight,
+        isLoadingValidateToken,
         login,
         logout,
         user,

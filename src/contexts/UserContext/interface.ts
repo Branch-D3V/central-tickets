@@ -10,6 +10,7 @@ export interface UserContextProps {
   isAuthenticated: boolean;
   isLoadingPages: boolean;
   isLoadingInsight: boolean;
+  isLoadingValidateToken: boolean;
   user: User;
   insight: Insight;
 }
