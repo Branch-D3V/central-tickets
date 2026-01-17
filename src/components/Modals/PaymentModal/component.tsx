@@ -142,7 +142,7 @@ export default function PaymentModal({
   }, [plan]);
 
   React.useEffect(() => {
-    if (paymentMethod !== "pix" || !data?.response?.qrcode) {
+    if (paymentMethod !== "pix" || !data?.response?.qrcode?.emv) {
       setProgress(0);
       setTimeLeft(600);
       return;
@@ -168,7 +168,7 @@ export default function PaymentModal({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [paymentMethod, data?.response?.qrcode]);
+  }, [paymentMethod, data?.response?.qrcode?.emv]);
 
   React.useEffect(() => {
     if (isLoadingPages && !isAuthenticated && !isLoadingPages) {
