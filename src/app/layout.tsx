@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     icon: "/heart.png",
   },
   description: "Liberte-se com os melhores conteúdos da Andressa Urach",
+  other: {
+    "x-developed-by": "Dev LSeyth",
+    "x-project": "urach-video-front",
+    "x-build-signature": "LS-urach-2026",
+  },
 };
 
 export default function RootLayout({
@@ -23,14 +28,14 @@ export default function RootLayout({
         <Script src="https://api.marchabb.com/v1/js" strategy="lazyOnload" />
       </head>
       <body
+        className={gilroy.className}
         style={{
-          height: "100dvh",
+          minHeight: "100dvh",
           backgroundColor: "#FFFFFF",
           color: "#000000",
           fontStyle: "normal",
           fontWeight: "500",
         }}
-        className={gilroy.className}
       >
         <Providers>
           <MainLayout>{children}</MainLayout>

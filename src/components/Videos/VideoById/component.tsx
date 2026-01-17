@@ -60,18 +60,17 @@ export default function VideoById({ uuid }: VideoByIdComponentProps) {
   }
 
   if (!dataById) {
-    return <Text color="gray.500">Vídeo não encontrado</Text>;
+    return (
+      <Stack w="full" h="60vh" align="center" justify="center">
+        <Text color="gray.500">Vídeo não encontrado</Text>
+      </Stack>
+    );
   }
 
   return (
     <Stack w="full" px={2} gap={6} zIndex={20}>
-      <Stack
-        align="flex-start"
-        direction={{ base: "column", lg: "row" }}
-        gap={6}
-        w="full"
-      >
-        <Stack w="full" flex={3} gap={4}>
+      <Stack align="flex-start" gap={6} w="full">
+        <Stack maxW={"1250px"} w="full" flex={3} gap={4}>
           <Box
             w="full"
             bg="black"
@@ -112,7 +111,7 @@ export default function VideoById({ uuid }: VideoByIdComponentProps) {
         </Stack>
 
         <SimpleGrid
-          columns={{ base: 2, md: 3, lg: 1 }}
+          columns={{ base: 2, md: 3, lg: 4 }}
           w={{ base: "full", lg: "auto" }}
           gap={4}
           minW={"260px"}
@@ -132,43 +131,45 @@ export default function VideoById({ uuid }: VideoByIdComponentProps) {
                   </Center>
                 </Box>
               ))
-            : data?.map((video, index) => (
-                <Box
-                  onClick={() => router.push(`/videos/${video.uuid}`)}
-                  key={index}
-                  cursor="pointer"
-                  _hover={{ opacity: 0.85 }}
-                >
+            : data
+                ?.filter((video) => video.uuid !== uuid)
+                .map((video, index) => (
                   <Box
-                    maxW="300px"
-                    w="full"
-                    aspectRatio="16 / 9"
-                    borderRadius="10px"
-                    overflow="hidden"
-                    bg="gray.200"
+                    onClick={() => router.push(`/videos/${video.uuid}`)}
+                    key={index}
+                    cursor="pointer"
+                    _hover={{ opacity: 0.85 }}
                   >
-                    <Image
-                      src={video.url_thumb}
-                      alt={video.titulo}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Box>
+                    <Box
+                      maxW="300px"
+                      w="full"
+                      aspectRatio="16 / 9"
+                      borderRadius="10px"
+                      overflow="hidden"
+                      bg="gray.200"
+                    >
+                      <Image
+                        src={video.url_thumb}
+                        alt={video.titulo}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
 
-                  <Text
-                    mt={2}
-                    fontSize="14px"
-                    fontWeight="semibold"
-                    lineHeight="1.3"
-                    lineClamp={2}
-                  >
-                    {video.titulo}
-                  </Text>
-                </Box>
-              ))}
+                    <Text
+                      mt={2}
+                      fontSize="14px"
+                      fontWeight="semibold"
+                      lineHeight="1.3"
+                      lineClamp={2}
+                    >
+                      {video.titulo}
+                    </Text>
+                  </Box>
+                ))}
         </SimpleGrid>
       </Stack>
     </Stack>

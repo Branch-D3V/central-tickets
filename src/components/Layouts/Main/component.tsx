@@ -8,25 +8,27 @@ import AgeModal from "@/components/Modals/AgeModal";
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <Stack
-      w={"full"}
-      h={"full"}
-      direction={"row"}
-      align={"center"}
-      justify={"center"}
+      position="relative"
+      w="full"
+      minH="100dvh"
       backgroundImage="url('/assets/webp/background.webp')"
       backgroundSize="cover"
-      backgroundPosition="center"
+      backgroundPosition="center top"
       backgroundRepeat="no-repeat"
     >
       <Stack
-        position="absolute"
+        position="fixed"
         inset={0}
         bg="whiteAlpha.800"
         backdropFilter="blur(15px)"
+        zIndex={0}
       />
-      <HeaderComponent />
-      {children}
-      <AgeModal />
+
+      <Stack position="relative" zIndex={1} w="full">
+        <HeaderComponent />
+        {children}
+        <AgeModal />
+      </Stack>
     </Stack>
   );
 }

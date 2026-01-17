@@ -8,7 +8,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider>
       <SecurityProvider>
-        <Stack w={"full"} h={"full"}>
+        <Stack w="full" minH="100dvh">
           {children}
         </Stack>
       </SecurityProvider>
