@@ -3,16 +3,24 @@
 import { thumbnailsVideos } from "@/data/thumbnails";
 import {
   Box,
+  ButtonGroup,
   HStack,
   Icon,
   IconButton,
   Image,
+  Pagination,
   Portal,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FiLock, FiX, IoAlertCircleOutline } from "@/components/Icons";
+import {
+  FiLock,
+  FiX,
+  IoAlertCircleOutline,
+  FiChevronLeft,
+  FiChevronRight,
+} from "@/components/Icons";
 import React from "react";
 import { FiPlay } from "react-icons/fi";
 import UploadVideoModal from "../Modals/UploadVideoModal/component";
@@ -27,17 +35,23 @@ import { SelectableItem } from "@/providers/selectableItem";
 
 export default function VideosComponent() {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
-  const [request, isLoading, data] = useFetch<Array<Media>>();
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [request, isLoading, data, pagination] = useFetch<Array<Media>>();
   const { isAuthenticated, user } = useUser();
   const route = useRouter();
   const token = getTokenClient();
 
-  const handleRequestVideos = () => {
+  const handleRequestVideos = (page = 1) => {
     request("/api/media/", {
       method: "GET",
-      params: { tipo: "VIDEO" },
+      params: { tipo: "VIDEO", page, page_size: 20 },
       headers: { Authorization: token || "" },
     });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    handleRequestVideos(page);
   };
 
   const videos = Array.from({ length: 10 }).map(
@@ -223,6 +237,66 @@ export default function VideosComponent() {
                 ) : null,
               )}
             </Box>
+            {pagination?.total_pages > 1 && (
+              <Stack my={8} align="center">
+                <Pagination.Root
+                  count={pagination.total_pages}
+                  pageSize={1}
+                  page={currentPage}
+                  onPageChange={(e) => handlePageChange(e.page)}
+                >
+                  <ButtonGroup variant="ghost" size="md">
+                    <Pagination.PrevTrigger asChild>
+                      <IconButton
+                        aria-label="Anterior"
+                        color={"#FF0080"}
+                        _hover={{
+                          bg: "#FF0080",
+                          color: "white",
+                        }}
+                      >
+                        <FiChevronLeft />
+                      </IconButton>
+                    </Pagination.PrevTrigger>
+
+                    <Pagination.Items
+                      render={(page) => (
+                        <IconButton
+                          key={page.value}
+                          color={
+                            page.value === currentPage ? "white" : "#FF0080"
+                          }
+                          bg={
+                            page.value === currentPage
+                              ? "#FF0080"
+                              : "transparent"
+                          }
+                          _hover={{
+                            bg: "#FF0080",
+                            color: "white",
+                          }}
+                        >
+                          {page.value}
+                        </IconButton>
+                      )}
+                    />
+
+                    <Pagination.NextTrigger asChild>
+                      <IconButton
+                        aria-label="Próxima"
+                        color={"#FF0080"}
+                        _hover={{
+                          bg: "#FF0080",
+                          color: "white",
+                        }}
+                      >
+                        <FiChevronRight />
+                      </IconButton>
+                    </Pagination.NextTrigger>
+                  </ButtonGroup>
+                </Pagination.Root>
+              </Stack>
+            )}
           </SelectionProvider>
         ) : (
           <Stack

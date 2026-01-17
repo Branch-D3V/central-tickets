@@ -11,6 +11,8 @@ import {
   Text,
   Image,
   Spinner,
+  Pagination,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { FiLock, FiChevronLeft, FiChevronRight, FiX } from "@/components/Icons";
 
@@ -30,6 +32,7 @@ export default function PicturesComponent() {
   const route = useRouter();
 
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   const close = () => setActiveIndex(null);
 
@@ -45,11 +48,20 @@ export default function PicturesComponent() {
       return (prev - 1 + data.length) % data.length;
     });
 
-  const handleFetchImages = () => {
+  const handleFetchImages = (page = 1) => {
     request("/api/media/", {
       method: "GET",
-      params: { tipo: "IMAGEM" },
+      params: {
+        tipo: "IMAGEM",
+        page,
+        page_size: 40,
+      },
     });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    handleFetchImages(page);
   };
 
   React.useEffect(() => {
@@ -66,7 +78,7 @@ export default function PicturesComponent() {
   }, [activeIndex]);
 
   React.useEffect(() => {
-    handleFetchImages();
+    handleFetchImages(1);
   }, []);
 
   return (
@@ -171,6 +183,66 @@ export default function PicturesComponent() {
                 </Box>
               ))}
             </Box>
+            {pagination?.total_pages > 1 && (
+              <Stack my={8} align="center">
+                <Pagination.Root
+                  count={pagination.total_pages}
+                  pageSize={1}
+                  page={currentPage}
+                  onPageChange={(e) => handlePageChange(e.page)}
+                >
+                  <ButtonGroup variant="ghost" size="md">
+                    <Pagination.PrevTrigger asChild>
+                      <IconButton
+                        aria-label="Anterior"
+                        color={"#FF0080"}
+                        _hover={{
+                          bg: "#FF0080",
+                          color: "white",
+                        }}
+                      >
+                        <FiChevronLeft />
+                      </IconButton>
+                    </Pagination.PrevTrigger>
+
+                    <Pagination.Items
+                      render={(page) => (
+                        <IconButton
+                          key={page.value}
+                          color={
+                            page.value === currentPage ? "white" : "#FF0080"
+                          }
+                          bg={
+                            page.value === currentPage
+                              ? "#FF0080"
+                              : "transparent"
+                          }
+                          _hover={{
+                            bg: "#FF0080",
+                            color: "white",
+                          }}
+                        >
+                          {page.value}
+                        </IconButton>
+                      )}
+                    />
+
+                    <Pagination.NextTrigger asChild>
+                      <IconButton
+                        aria-label="Próxima"
+                        color={"#FF0080"}
+                        _hover={{
+                          bg: "#FF0080",
+                          color: "white",
+                        }}
+                      >
+                        <FiChevronRight />
+                      </IconButton>
+                    </Pagination.NextTrigger>
+                  </ButtonGroup>
+                </Pagination.Root>
+              </Stack>
+            )}
           </SelectionProvider>
         ) : (
           <Stack
@@ -190,7 +262,12 @@ export default function PicturesComponent() {
           </Stack>
         )
       ) : (
-        <Stack w={"full"} alignItems="center" justifyContent="center" h={"full"}>
+        <Stack
+          w={"full"}
+          alignItems="center"
+          justifyContent="center"
+          h={"full"}
+        >
           <Spinner size="xl" color="#FF0080" />
         </Stack>
       )}
