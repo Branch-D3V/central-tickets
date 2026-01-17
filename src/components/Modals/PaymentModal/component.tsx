@@ -30,7 +30,7 @@ import { useUser } from "@/contexts/UserContext";
 import { redirect } from "next/navigation";
 
 export default function PaymentModal({
-  onSuccess,
+  // onSuccess,
   open,
   setOpen,
   plan,
@@ -39,11 +39,16 @@ export default function PaymentModal({
   const [progress, setProgress] = React.useState(0);
   const [timeLeft, setTimeLeft] = React.useState(4 * 60);
 
-  const { handleValidateToken, isAuthenticated, isLoadingPages } = useUser();
+  const {
+    handleValidateToken,
+    isAuthenticated,
+    isLoadingPages,
+    isLoadingValidateToken,
+  } = useUser();
 
   const paymentMethods = [
     { label: "PIX", value: "pix" },
-    { label: "Cartão", value: "credit_card" },
+    // { label: "Cartão", value: "credit_card" },
     // { label: "Boleto", value: "boleto" },
   ];
 
@@ -53,7 +58,6 @@ export default function PaymentModal({
     register,
     setValue,
     watch,
-    reset,
     formState: { errors },
     handleSubmit,
   } = useForm({
@@ -61,6 +65,7 @@ export default function PaymentModal({
     shouldUnregister: true,
     defaultValues: {
       plano_id: plan.id,
+      paymentMethod: "pix",
     },
   });
 
@@ -113,8 +118,8 @@ export default function PaymentModal({
             paymentMethod === "credit_card"
               ? "Pagamento realizado com sucesso!"
               : paymentMethod === "pix"
-              ? "Código gerado com sucesso!"
-              : "Boleto gerado com sucesso!",
+                ? "Código gerado com sucesso!"
+                : "Boleto gerado com sucesso!",
           type: "success",
         });
         if (paymentMethod === "credit_card") {
@@ -133,17 +138,18 @@ export default function PaymentModal({
 
   React.useEffect(() => {
     setValue("plano_id", plan.id);
+    setValue("paymentMethod", "pix");
   }, [plan]);
 
   React.useEffect(() => {
-    if (paymentMethod !== "pix" || !data?.pix?.qrcode) {
+    if (paymentMethod !== "pix" || !data?.response?.qrcode) {
       setProgress(0);
-      setTimeLeft(240);
+      setTimeLeft(600);
       return;
     }
 
     setProgress(0);
-    setTimeLeft(240);
+    setTimeLeft(600);
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
@@ -154,7 +160,7 @@ export default function PaymentModal({
         }
 
         const newTime = prev - 1;
-        const percentage = ((240 - newTime) / 240) * 100;
+        const percentage = ((600 - newTime) / 600) * 100;
 
         setProgress(Math.round(percentage));
         return newTime;
@@ -162,7 +168,7 @@ export default function PaymentModal({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [paymentMethod, data?.pix?.qrcode]);
+  }, [paymentMethod, data?.response?.qrcode]);
 
   React.useEffect(() => {
     if (isLoadingPages && !isAuthenticated && !isLoadingPages) {
@@ -208,18 +214,18 @@ export default function PaymentModal({
                       <DataList.ItemValue>{plan.descricao}</DataList.ItemValue>
                     </DataList.Item>{" "}
                   </DataList.Root>
-                  <Text fontSize={"18px"}>Informações do pedido:</Text>
                 </Stack>
 
                 <RadioGroup.Root
                   value={paymentMethod}
+                  defaultValue={paymentMethods[0].value}
                   onValueChange={(e) =>
                     setValue(
                       "paymentMethod",
                       e.value as "pix" | "credit_card" | "boleto",
                       {
                         shouldValidate: true,
-                      }
+                      },
                     )
                   }
                 >
@@ -304,70 +310,82 @@ export default function PaymentModal({
                   </Stack>
                 )}
 
-                {paymentMethod === "pix" && data && data?.pix?.qrcode && (
-                  <Stack
-                    p={2}
-                    borderRadius={"md"}
-                    w={"full"}
-                    alignItems={"center"}
-                  >
-                    <Text>Realize o pagamento</Text>
+                {paymentMethod === "pix" &&
+                  data &&
+                  data?.response?.qrcode?.emv && (
                     <Stack
                       p={2}
-                      border={"2px solid #FF0080"}
                       borderRadius={"md"}
+                      w={"full"}
                       alignItems={"center"}
                     >
-                      <QRCode size={200} value={String(data?.pix?.qrcode)} />
-                      <Text fontSize={"12px"} color={"#FF0080"}>
-                        Escaneie o QR Code para pagar!
-                      </Text>
-                    </Stack>
-                    <ButtonCopy
-                      textCopy={data?.pix?.qrcode ?? "pix-code"}
-                      disabled={!data?.pix?.qrcode}
-                      color={"#FF0080"}
-                      border={"1px solid #FF0080"}
-                      variant={"outline"}
-                      w={"full"}
-                      size={"lg"}
-                    >
-                      Pix Copia e Cola
-                    </ButtonCopy>
-                    <Input disabled defaultValue={data?.pix?.qrcode} />
-                    <Stack w="full" gap={1}>
-                      <HStack justify="space-between">
-                        <Text fontSize="sm" fontWeight="medium">
-                          Tempo para pagamento
-                        </Text>
-
-                        <Text fontSize="sm" fontWeight="bold" color={"#FF0080"}>
-                          {formatTime(timeLeft)}
-                        </Text>
-                      </HStack>
-
-                      <Progress.Root
-                        value={progress}
-                        w="full"
-                        colorPalette="pink"
+                      <Text>Realize o pagamento</Text>
+                      <Stack
+                        p={2}
+                        border={"2px solid #FF0080"}
+                        borderRadius={"md"}
+                        alignItems={"center"}
                       >
-                        <Progress.Track>
-                          <Progress.Range />
-                        </Progress.Track>
-                      </Progress.Root>
-                    </Stack>
-                    {timeLeft < 200 && (
-                      <ButtonAction
-                        loading={isLoading}
-                        bg="#gray.500"
-                        color="white"
-                        onClick={() => handleValidateToken()}
+                        <QRCode
+                          size={200}
+                          value={String(data?.response?.qrcode?.emv)}
+                        />
+                        <Text fontSize={"12px"} color={"#FF0080"}>
+                          Escaneie o QR Code para pagar!
+                        </Text>
+                      </Stack>
+                      <ButtonCopy
+                        textCopy={data?.response?.qrcode?.emv ?? "pix-code"}
+                        disabled={!data?.response?.qrcode}
+                        color={"#FF0080"}
+                        border={"1px solid #FF0080"}
+                        variant={"outline"}
+                        w={"full"}
+                        size={"lg"}
                       >
-                        Já pagou? Confirmar pagamento
-                      </ButtonAction>
-                    )}
-                  </Stack>
-                )}
+                        Pix Copia e Cola
+                      </ButtonCopy>
+                      <Input
+                        disabled
+                        defaultValue={data?.response?.qrcode?.emv}
+                      />
+                      <Stack w="full" gap={1}>
+                        <HStack justify="space-between">
+                          <Text fontSize="sm" fontWeight="medium">
+                            Tempo para pagamento
+                          </Text>
+
+                          <Text
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color={"#FF0080"}
+                          >
+                            {formatTime(timeLeft)}
+                          </Text>
+                        </HStack>
+
+                        <Progress.Root
+                          value={progress}
+                          w="full"
+                          colorPalette="pink"
+                        >
+                          <Progress.Track>
+                            <Progress.Range />
+                          </Progress.Track>
+                        </Progress.Root>
+                      </Stack>
+                      {timeLeft < 200 && (
+                        <ButtonAction
+                          loading={isLoadingValidateToken}
+                          bg="#gray.500"
+                          color="white"
+                          onClick={() => handleValidateToken()}
+                        >
+                          Já pagou? Confirmar pagamento
+                        </ButtonAction>
+                      )}
+                    </Stack>
+                  )}
 
                 <ButtonAction
                   loading={isLoading}
@@ -375,11 +393,12 @@ export default function PaymentModal({
                   color="white"
                   type="submit"
                 >
-                  {paymentMethod === "credit_card"
+                  {/* {paymentMethod === "credit_card"
                     ? "Pagar com cartão"
                     : paymentMethod === "pix"
-                    ? "Gerar código PIX"
-                    : "Gerar boleto"}
+                      ? "Gerar código PIX"
+                      : "Gerar boleto"} */}
+                  Gerar código PIX
                 </ButtonAction>
               </Stack>
             </Dialog.Body>
