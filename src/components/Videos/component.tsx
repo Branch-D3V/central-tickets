@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FiLock, FiX } from "@/components/Icons";
+import { FiLock, FiX, IoAlertCircleOutline } from "@/components/Icons";
 import React from "react";
 import { FiPlay } from "react-icons/fi";
 import UploadVideoModal from "../Modals/UploadVideoModal/component";
@@ -26,16 +26,25 @@ import { SelectionProvider } from "@/providers/selectionProvider";
 import { SelectableItem } from "@/providers/selectableItem";
 
 export default function VideosComponent() {
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
   const [request, isLoading, data] = useFetch<Array<Media>>();
   const { isAuthenticated, user } = useUser();
   const route = useRouter();
   const token = getTokenClient();
 
+  const handleRequestVideos = () => {
+    request("/api/media/", {
+      method: "GET",
+      params: { tipo: "VIDEO" },
+      headers: { Authorization: token || "" },
+    });
+  };
+
   const videos = Array.from({ length: 10 }).map(
-    (_, i) => thumbnailsVideos[i % thumbnailsVideos.length]
+    (_, i) => thumbnailsVideos[i % thumbnailsVideos.length],
   );
 
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+  const haveProcess = data && data?.some((video) => video.status !== "PRONTO");
 
   React.useEffect(() => {
     if (activeIndex === null) return;
@@ -53,11 +62,7 @@ export default function VideosComponent() {
   }, [activeIndex]);
 
   React.useEffect(() => {
-    request("/api/media/", {
-      method: "GET",
-      params: { tipo: "VIDEO" },
-      headers: { Authorization: token || "" },
-    });
+    handleRequestVideos();
   }, []);
 
   return (
@@ -67,117 +72,156 @@ export default function VideosComponent() {
           Videos
         </Text>
         {isAuthenticated && user?.tipo_usuario === "administrador" && (
-          <UploadVideoModal />
+          <UploadVideoModal onSuccess={() => handleRequestVideos()} />
         )}
       </HStack>
+      {user.tipo_usuario == "administrador" && haveProcess && (
+        <HStack w={"full"} zIndex={10} color={"#FF0080"}>
+          <IoAlertCircleOutline />
+          Ao fazer uploads simultâneos, o processamento poderá demorar mais.
+        </HStack>
+      )}
       {!isLoading ? (
         !!data?.length ? (
           <SelectionProvider>
-            <Box columnCount={{ base: 1, sm: 2, md: 3 }} columnGap="12px">
-              {data?.map((video, index) => (
-                <Box
-                  key={index}
-                  mb="12px"
-                  breakInside="avoid"
-                  position="relative"
-                  borderRadius="14px"
-                  overflow="hidden"
-                  cursor="pointer"
-                  role="group"
-                  transition="all 0.3s ease"
-                  _hover={{ transform: "translateY(-4px)" }}
-                  onClick={() =>
-                    user.status_acesso
-                      ? route.push(`/videos/${video.uuid}`)
-                      : route.push("/planos")
-                  }
-                >
+            <Box
+              zIndex={9999}
+              columnCount={{ base: 1, sm: 2, md: 3 }}
+              columnGap="12px"
+            >
+              {data?.map((video, index) =>
+                video.status == "PRONTO" ? (
                   <Box
-                    w="100%"
-                    aspectRatio="16 / 9"
-                    bg="black"
+                    key={index}
+                    mb="12px"
+                    breakInside="avoid"
                     position="relative"
+                    borderRadius="14px"
+                    overflow="hidden"
+                    cursor="pointer"
+                    role="group"
+                    transition="all 0.3s ease"
+                    _hover={{ transform: "translateY(-4px)" }}
+                    onClick={() =>
+                      user.status_acesso
+                        ? route.push(`/videos/${video.uuid}`)
+                        : route.push("/planos")
+                    }
                   >
-                    <SelectableItem key={video.uuid} id={video.uuid}>
-                      <Image
-                        src={video.url_thumb}
-                        alt={video.titulo}
-                        w="100%"
-                        h="100%"
-                        objectFit="contain"
-                        filter={!user.status_acesso ? "blur(10px)" : "none"}
-                        transform="scale(1.05)"
-                        transition="transform 0.3s ease"
-                        _groupHover={{ transform: "scale(1.1)" }}
-                      />
-                    </SelectableItem>
-
                     <Box
-                      position="absolute"
-                      inset={0}
+                      w="100%"
+                      aspectRatio="16 / 9"
+                      bg="black"
+                      position="relative"
+                    >
+                      <SelectableItem key={video.uuid} id={video.uuid}>
+                        <Image
+                          src={video.url_thumb}
+                          alt={video.titulo}
+                          w="100%"
+                          h="100%"
+                          objectFit="contain"
+                          filter={!user.status_acesso ? "blur(10px)" : "none"}
+                          transform="scale(1.05)"
+                          transition="transform 0.3s ease"
+                          _groupHover={{ transform: "scale(1.1)" }}
+                        />
+                      </SelectableItem>
+
+                      <Box
+                        position="absolute"
+                        inset={0}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={3}
+                        bg={
+                          !user.status_acesso
+                            ? "rgba(0,0,0,0.6)"
+                            : "rgba(0,0,0,0.25)"
+                        }
+                        transition="background 0.3s"
+                      >
+                        {!user.status_acesso ? (
+                          <Icon as={FiLock} boxSize="28px" color="white" />
+                        ) : (
+                          <Icon
+                            as={FiPlay}
+                            boxSize="44px"
+                            color="white"
+                            opacity={0.9}
+                            _groupHover={{ transform: "scale(1.1)" }}
+                            transition="transform 0.2s"
+                          />
+                        )}
+                      </Box>
+
+                      {video.eh_premium && (
+                        <Box
+                          position="absolute"
+                          top="10px"
+                          left="10px"
+                          bg="rgba(0,0,0,0.7)"
+                          px={2}
+                          py={1}
+                          borderRadius="6px"
+                          fontSize="11px"
+                          fontWeight="bold"
+                          color="white"
+                        >
+                          PREMIUM
+                        </Box>
+                      )}
+                      <Box
+                        position="absolute"
+                        bottom={0}
+                        left={0}
+                        right={0}
+                        px={4}
+                        py={3}
+                        bgGradient="linear(to-t, rgba(0,0,0,0.85), transparent)"
+                      >
+                        <Text
+                          color="white"
+                          fontSize="14px"
+                          fontWeight="semibold"
+                          lineHeight="1.3"
+                          lineClamp={2}
+                        >
+                          {video.titulo}
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                ) : user.tipo_usuario === "administrador" ? (
+                  <Box
+                    key={index}
+                    mb="12px"
+                    breakInside="avoid"
+                    position="relative"
+                    borderRadius="14px"
+                    overflow="hidden"
+                    cursor="not-allowed"
+                  >
+                    <Box
+                      w="100%"
+                      aspectRatio="16 / 9"
+                      bg="black"
+                      position="relative"
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
+                      flexDirection="column"
                       gap={3}
-                      bg={
-                        !user.status_acesso
-                          ? "rgba(0,0,0,0.6)"
-                          : "rgba(0,0,0,0.25)"
-                      }
-                      transition="background 0.3s"
                     >
-                      {!user.status_acesso ? (
-                        <Icon as={FiLock} boxSize="28px" color="white" />
-                      ) : (
-                        <Icon
-                          as={FiPlay}
-                          boxSize="44px"
-                          color="white"
-                          opacity={0.9}
-                          _groupHover={{ transform: "scale(1.1)" }}
-                          transition="transform 0.2s"
-                        />
-                      )}
-                    </Box>
-
-                    {video.eh_premium && (
-                      <Box
-                        position="absolute"
-                        top="10px"
-                        left="10px"
-                        bg="rgba(0,0,0,0.7)"
-                        px={2}
-                        py={1}
-                        borderRadius="6px"
-                        fontSize="11px"
-                        fontWeight="bold"
-                        color="white"
-                      >
-                        PREMIUM
-                      </Box>
-                    )}
-                    <Box
-                      position="absolute"
-                      bottom={0}
-                      left={0}
-                      right={0}
-                      px={4}
-                      py={3}
-                      bgGradient="linear(to-t, rgba(0,0,0,0.85), transparent)"
-                    >
-                      <Text
-                        color="white"
-                        fontSize="14px"
-                        fontWeight="semibold"
-                        lineHeight="1.3"
-                        lineClamp={2}
-                      >
-                        {video.titulo}
+                      <Text color="white" fontSize="16px" fontWeight="bold">
+                        Processando
                       </Text>
+                      <Spinner size="lg" color="white" />
                     </Box>
                   </Box>
-                </Box>
-              ))}
+                ) : null,
+              )}
             </Box>
           </SelectionProvider>
         ) : (

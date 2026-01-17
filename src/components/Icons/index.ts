@@ -12,6 +12,7 @@ import {
   MdWorkspacePremium,
 } from "react-icons/md";
 import { IoIosHeart, IoMdLogIn, IoMdPersonAdd } from "react-icons/io";
+import { IoAlertCircleOutline } from "react-icons/io5";
 import {
   FiLock,
   FiEye,
@@ -43,6 +44,7 @@ export {
   IoIosHeart,
   IoMdLogIn,
   IoMdPersonAdd,
+  IoAlertCircleOutline,
   FiLock,
   FiEye,
   FiEyeOff,

@@ -18,7 +18,6 @@ import {
   RiVerifiedBadgeFill,
   FaRegImage,
   MdOndemandVideo,
-  IoIosHeart,
   FiLock,
   FaUser,
 } from "@/components/Icons";
@@ -74,7 +73,9 @@ export default function DashboardComponent() {
                   _hover={{ transform: "translateY(-4px)" }}
                   onClick={() =>
                     isAuthenticated && user.status_acesso === true
-                      ? ""
+                      ? type === "IMAGEM"
+                        ? router.push(`/fotos/`)
+                        : router.push(`/videos/${image.uuid}/`)
                       : router.push("/planos")
                   }
                 >
