@@ -382,7 +382,7 @@ export default function PaymentModal({
                           </Progress.Track>
                         </Progress.Root>
                       </Stack>
-                      {timeLeft < 480 && (
+                      {timeLeft < 580 && (
                         <ButtonAction
                           loading={isLoadingValidateToken}
                           bg="#gray.500"

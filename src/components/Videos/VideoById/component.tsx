@@ -111,8 +111,8 @@ export default function VideoById({ uuid }: VideoByIdComponentProps) {
         </Stack>
 
         <SimpleGrid
-          columns={{ base: 2, md: 3, lg: 4 }}
-          w={{ base: "full", lg: "auto" }}
+          columns={{ base: 2, md: 4, lg: 5, xl: 6 }}
+          w={{ base: "full" }}
           gap={4}
           minW={"260px"}
         >
