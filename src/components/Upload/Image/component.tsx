@@ -48,7 +48,7 @@ export default function ImageUploader({ value, onChange }: ImageUploaderProps) {
       <Input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/png, image/jpeg, image/jpg"
         display="none"
         onChange={onInputChange}
       />

@@ -44,6 +44,7 @@ export default function PaymentModal({
     isAuthenticated,
     isLoadingPages,
     isLoadingValidateToken,
+    user,
   } = useUser();
 
   const paymentMethods = [
@@ -175,6 +176,13 @@ export default function PaymentModal({
       redirect("/login");
     }
   }, [isAuthenticated, isLoadingPages]);
+
+  React.useEffect(() => {
+    if (isAuthenticated && user.status_acesso == true) {
+      setOpen(false);
+      redirect("/");
+    }
+  }, [user.status_acesso]);
 
   return (
     <Dialog.Root open={open} placement="center" modal>
