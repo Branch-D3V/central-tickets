@@ -96,6 +96,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const clearSession = () => {
+    setUser(initialUser());
     destroyCookie(undefined, "token", { path: "/" });
     setIsAuthenticated(false);
   };
