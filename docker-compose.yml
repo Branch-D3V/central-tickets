@@ -2,8 +2,8 @@ version: "3.9"
 
 services:
   web:
-    container_name: urach-video-front
-    image: urach-video-front
+    container_name: central-tickets
+    image: central-tickets
     build: .
     ports:
       - "3000:3000"

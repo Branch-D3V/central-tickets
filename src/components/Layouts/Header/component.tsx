@@ -3,6 +3,7 @@
 import {
   Avatar,
   Box,
+  Button,
   CloseButton,
   Drawer,
   Heading,
@@ -26,7 +27,6 @@ import {
 import { defaultNavigation } from "@/data/defaultNavigation";
 import ButtonAction from "@/components/Buttons/Action";
 import { usePathname, useRouter } from "next/navigation";
-import { LinkComponent } from "@/components/Link";
 import { useUser } from "@/contexts/UserContext";
 import React from "react";
 
@@ -92,7 +92,8 @@ export function HeaderComponent({}: HeaderComponentProps) {
                     <Drawer.Body>
                       <Stack>
                         {defaultNavigation.map((item, index) => (
-                          <LinkComponent
+                          <Button
+                            as={"a"}
                             borderBottom={
                               pathname === item.value
                                 ? "5px solid #FF0080"
@@ -102,12 +103,12 @@ export function HeaderComponent({}: HeaderComponentProps) {
                             h={"40px"}
                             fontSize={"20px"}
                             fontStyle={"italic"}
-                            href={item.value}
-                            label={item.label}
                             _hover={{
                               borderBottom: "5px solid #FF0080",
                             }}
-                          />
+                          >
+                            {item.label}
+                          </Button>
                         ))}
                       </Stack>
                     </Drawer.Body>
@@ -188,7 +189,7 @@ export function HeaderComponent({}: HeaderComponentProps) {
           {!isBreaking && (
             <HStack w={"full"} justifyContent="center" gap={8} maxW={"500px"}>
               {defaultNavigation.map((item, index) => (
-                <LinkComponent
+                <Button
                   borderBottom={
                     pathname === item.value ? "5px solid #FF0080" : "none"
                   }
@@ -196,12 +197,12 @@ export function HeaderComponent({}: HeaderComponentProps) {
                   h={"80px"}
                   fontSize={"16px"}
                   fontStyle={"italic"}
-                  href={item.value}
-                  label={item.label}
                   _hover={{
                     borderBottom: "5px solid #FF0080",
                   }}
-                />
+                >
+                  {item.label}
+                </Button>
               ))}
             </HStack>
           )}
@@ -223,7 +224,7 @@ export function HeaderComponent({}: HeaderComponentProps) {
               </Menu.Trigger>
               <Portal>
                 <Menu.Positioner>
-                  <Menu.Content zIndex={2000} minW={"200px"} p={2} >
+                  <Menu.Content zIndex={2000} minW={"200px"} p={2}>
                     <Menu.Item
                       cursor={"pointer"}
                       value="perfil"
@@ -289,8 +290,8 @@ export function HeaderComponent({}: HeaderComponentProps) {
                 {!isBreaking
                   ? "Registrar-se"
                   : pathname === "/cadastro"
-                  ? "Registrar-se"
-                  : ""}
+                    ? "Registrar-se"
+                    : ""}
               </ButtonAction>
             </HStack>
           )}

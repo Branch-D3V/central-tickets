@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Liberte-se com os melhores conteúdos da Andressa Urach",
   other: {
     "x-developed-by": "Dev LSeyth",
-    "x-project": "urach-video-front",
+    "x-project": "central-tickets",
     "x-build-signature": "LS-urach-2026",
   },
 };
