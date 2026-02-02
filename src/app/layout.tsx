@@ -5,15 +5,15 @@ import { gilroy } from "@/components/ui/fonts";
 import MainLayout from "@/components/Layouts/Main";
 
 export const metadata: Metadata = {
-  title: "Andressa Urach",
+  title: "Central Tickets",
   icons: {
-    icon: "/heart.png",
+    icon: "/support-ticket.png",
   },
-  description: "Liberte-se com os melhores conteúdos da Andressa Urach",
+  description: "Central Tickets - Sistema de Gestão de Tickets de Suporte",
   other: {
     "x-developed-by": "Dev LSeyth",
     "x-project": "central-tickets",
-    "x-build-signature": "LS-urach-2026",
+    "x-build-signature": "Pedro Lisboa(Seyth) Developer-2026",
   },
 };
 

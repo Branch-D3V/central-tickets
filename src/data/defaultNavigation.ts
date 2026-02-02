@@ -4,25 +4,17 @@ import { NavigationItem } from "@/interfaces/GeneralNavigations";
 
 const defaultNavigation: Array<NavigationItem> = [
   {
-    value: "/",
-    label: "Inicio",
+    value: "/dashboard",
+    label: "Dashboard",
   },
   {
-    value: "/fotos",
-    label: "Fotos",
+    value: "/tickets",
+    label: "Meus Tickets",
   },
   {
-    value: "/videos",
-    label: "Videos",
+    value: "/novo-ticket",
+    label: "Novo Ticket",
   },
-  {
-    value: "/planos",
-    label: "Planos",
-  },
-  // {
-  //   value: "/sobre",
-  //   label: "Sobre mim",
-  // },
 ];
 
 export { defaultNavigation };

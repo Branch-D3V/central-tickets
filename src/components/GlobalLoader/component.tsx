@@ -18,7 +18,7 @@ export default function GlobalLoader() {
       justify="center"
       backdropFilter="blur(8px)"
     >
-      <Spinner size="xl" color="#FF0080" />
+      <Spinner size="xl" color="#3B82F6" />
     </Flex>
   );
 }

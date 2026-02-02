@@ -23,6 +23,7 @@ import {
   FiUploadCloud,
 } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
+import { HiOutlineTicket } from "react-icons/hi";
 import { HiOutlineIdentification } from "react-icons/hi2";
 import { LuUserRound } from "react-icons/lu";
 import { PiPowerBold } from "react-icons/pi";
@@ -53,6 +54,7 @@ export {
   FiX,
   FiUploadCloud,
   RxCross2,
+  HiOutlineTicket,
   HiOutlineIdentification,
   LuUserRound,
   PiPowerBold,

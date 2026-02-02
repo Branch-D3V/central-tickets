@@ -10,13 +10,13 @@ const theme = defineConfig({
 
       colors: {
         brand: {
-          50: { value: "#FFF0F7" },
-          100: { value: "#FFD6EB" },
-          200: { value: "#FFADD6" },
-          300: { value: "#FF7AB8" },
-          400: { value: "#FF3D99" },
-          500: { value: "#FF0080" },
-          600: { value: "#C30061" },
+          50: { value: "#EFF6FF" },
+          100: { value: "#DBEAFE" },
+          200: { value: "#BFDBFE" },
+          300: { value: "#93C5FD" },
+          400: { value: "#60A5FA" },
+          500: { value: "#3B82F6" }, // azul principal
+          600: { value: "#2563EB" },
         },
 
         gray: {

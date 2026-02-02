@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Text, Button } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import ButtonAction from "@/components/Buttons/Action";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ export default function NotFound() {
       <MotionText
         fontSize={{ base: "96px", md: "140px" }}
         fontWeight="bold"
-        color="#FF0080"
+        color="#3B82F6"
         initial={{ scale: 0.8 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 120 }}
@@ -44,10 +44,10 @@ export default function NotFound() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        Essa página não existe…
+        Essa página não existe
         <br />
-        <Text as="span" color="#FF0080" fontWeight="bold">
-          talvez você tenha ido fundo demais 😈
+        <Text as="span" color="#3B82F6" fontWeight="bold">
+          Retorne e verifique.
         </Text>
       </MotionText>
 
@@ -60,9 +60,9 @@ export default function NotFound() {
         animate={{ y: 0, opacity: 0.7 }}
         transition={{ delay: 0.4 }}
       >
-        Conteúdo restrito, rota inválida ou curiosidade demais.
+        Caso o erro persista,
         <br />
-        Melhor voltar antes que dê problema…
+        Entre em contato com o suporte.
       </MotionText>
 
       <MotionStack
@@ -73,22 +73,18 @@ export default function NotFound() {
         <ButtonAction
           onClick={() => router.push("/")}
           size="lg"
-          bg="#FF0080"
+          bg="#3B82F6"
           color="white"
           _hover={{
-            bg: "#C30061",
+            bg: "#295daf",
             transform: "scale(1.05)",
           }}
           transition="all 0.2s"
           borderRadius="full"
         >
-          Voltar para um lugar seguro 🔥
+          Voltar para Dashboard
         </ButtonAction>
       </MotionStack>
-
-      <Text fontSize="10px" opacity={0.2} position="absolute" bottom="12px">
-        Você não deveria estar aqui...
-      </Text>
     </MotionStack>
   );
 }
