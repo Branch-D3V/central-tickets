@@ -1,7 +1,5 @@
-import { Stack } from "@chakra-ui/react";
+import DashboardComponent from "./_components/dashboard-component";
 
 export default function Dashboard() {
-  return <Stack w={"full"} h={"full"}>
-    
-  </Stack>;
+  return <DashboardComponent />;
 }

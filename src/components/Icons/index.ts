@@ -1,5 +1,5 @@
 import { RiVerifiedBadgeFill } from "react-icons/ri";
-import { FaRegImage, FaUser } from "react-icons/fa";
+import { FaRegImage, FaUser, FaPlus } from "react-icons/fa";
 import {
   MdOndemandVideo,
   MdOutlineEmail,
@@ -21,18 +21,22 @@ import {
   FiChevronRight,
   FiX,
   FiUploadCloud,
+  FiZap,
 } from "react-icons/fi";
-import { RxCross2 } from "react-icons/rx";
+import { RxCross2, RxDashboard } from "react-icons/rx";
 import { HiOutlineTicket } from "react-icons/hi";
 import { HiOutlineIdentification } from "react-icons/hi2";
-import { LuUserRound } from "react-icons/lu";
+import { LuUserRound, LuTicket, LuTicketPlus } from "react-icons/lu";
 import { PiPowerBold } from "react-icons/pi";
+import { TiTicket } from "react-icons/ti";
 import { SiGoogleanalytics } from "react-icons/si";
+import { FaRegClock, FaRegCircleCheck } from "react-icons/fa6";
 
 export {
   RiVerifiedBadgeFill,
   FaRegImage,
   FaUser,
+  FaPlus,
   MdOndemandVideo,
   MdOutlineEmail,
   MdOutlineMenu,
@@ -53,10 +57,17 @@ export {
   FiChevronRight,
   FiX,
   FiUploadCloud,
+  FiZap,
   RxCross2,
+  RxDashboard,
   HiOutlineTicket,
   HiOutlineIdentification,
   LuUserRound,
+  LuTicket,
+  LuTicketPlus,
   PiPowerBold,
+  TiTicket,
   SiGoogleanalytics,
+  FaRegClock,
+  FaRegCircleCheck,
 };

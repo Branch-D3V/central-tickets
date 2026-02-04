@@ -9,29 +9,24 @@ import { useRouter } from "next/navigation";
 import { User } from "@/interfaces/User/User";
 import { initialUser } from "@/data/initialUser";
 import { toaster } from "@/components/ui/toaster";
-import { Insight } from "@/interfaces/Insight";
 
 const UserContext = React.createContext<UserContextProps>({
   isAuthenticated: false,
   isLoadingLogin: true,
   isLoadingPages: true,
-  isLoadingInsight: true,
   isLoadingValidateToken: true,
   login: async () => ({}) as User,
   logout: async () => {},
   handleValidateToken: async () => {},
   user: {} as User,
-  insight: {} as Insight,
 });
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [requestLogin, isLoadingLogin] = useFetch<User>();
   const [requestValidateToken, isLoadingValidateToken] = useFetch<User>();
-  const [requestInsight, isLoadingInsight] = useFetch<Insight>();
   const [isLoadingPages, setLoadingPages] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<User>(initialUser());
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
-  const [insight, setInsight] = React.useState<Insight>({} as Insight);
 
   const router = useRouter();
 
@@ -80,16 +75,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  const handleInsightData = async () => {
-    const resp = await requestInsight(`/api/admin/insights`, {
-      method: "GET",
-    });
-
-    if (resp && resp.data) {
-      setInsight({ ...resp.data });
-    }
-  };
-
   const logout = async () => {
     clearSession();
     router.push("/");
@@ -103,7 +88,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   React.useEffect(() => {
     handleValidateToken();
-    handleInsightData();
   }, []);
 
   return (
@@ -112,12 +96,10 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         isLoadingPages,
         isAuthenticated,
         isLoadingLogin,
-        isLoadingInsight,
         isLoadingValidateToken,
         login,
         logout,
         user,
-        insight,
         handleValidateToken,
       }}
     >

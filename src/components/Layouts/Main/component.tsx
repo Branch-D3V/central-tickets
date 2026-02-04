@@ -6,7 +6,7 @@ import SidebarComponent from "../Sidebar";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Stack position="relative" w="full" minH="100dvh">
+    <Stack w="full" minH="100dvh">
       <SidebarComponent />
       {children}
     </Stack>

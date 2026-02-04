@@ -10,7 +10,6 @@ import {
   Portal,
   Stack,
   Text,
-  useToken,
 } from "@chakra-ui/react";
 import { SidebarComponentProps } from "./interface";
 import {
@@ -38,11 +37,9 @@ export function SidebarComponent({}: SidebarComponentProps) {
     <Stack
       as="header"
       position="fixed"
-      top="0"
-      left="0"
       zIndex="overlay"
       transition="background-color 0.2s ease"
-      m={8}
+      m={{base: 2, md: 12}}
     >
       <Drawer.Root placement={"start"} open={open}>
         <Drawer.Trigger asChild>
@@ -90,7 +87,6 @@ export function SidebarComponent({}: SidebarComponentProps) {
                 <Stack>
                   {defaultNavigation.map((item, index) => (
                     <Button
-                      as={"a"}
                       border={
                         pathname === item.value ? "2px solid #3B82F6" : "none"
                       }
@@ -102,9 +98,10 @@ export function SidebarComponent({}: SidebarComponentProps) {
                       variant={"plain"}
                       _hover={{ bg: "#DBEAFE" }}
                       justifyContent={"flex-start"}
+                      onClick={() => router.push(item.value)}
                     >
                       <Icon
-                        as={HiOutlineTicket}
+                        as={item.icon}
                         boxSize={5}
                         mr={1}
                         color={pathname === item.value ? "#3B82F6" : "none"}
@@ -115,7 +112,12 @@ export function SidebarComponent({}: SidebarComponentProps) {
                   ))}
                 </Stack>
               </Drawer.Body>
-              <Drawer.Footer borderTop="1px solid" borderColor="#FF0080" mt={4}>
+              <Drawer.Footer
+                borderTop="1px solid"
+                borderColor="#3B82F6"
+                mt={4}
+                p={4}
+              >
                 <HStack
                   w="full"
                   key={user.email}
@@ -123,13 +125,15 @@ export function SidebarComponent({}: SidebarComponentProps) {
                   justify={"space-between"}
                 >
                   <Stack gap="0">
-                    <Text fontWeight="medium">{user.nome}</Text>
+                    <Text fontWeight={600} fontSize={"16px"} color={"#3B82F6"}>
+                      {user.nome || "Teste Segundo"}
+                    </Text>
                     <Text color="fg.muted" textStyle="sm">
-                      {user.email}
+                      {user.email || "teste@mail.com"}
                     </Text>
                   </Stack>
                   <IconButton
-                    bg={"#FF0080"}
+                    bg={"#3B82F6"}
                     color={"white"}
                     variant={"plain"}
                     borderRadius={"full"}

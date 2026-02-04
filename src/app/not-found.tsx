@@ -12,14 +12,14 @@ export default function NotFound() {
   const router = useRouter();
   return (
     <MotionStack
-      minH="100vh"
+      h="100vh"
       w="full"
       justify="center"
       align="center"
       px={4}
       gap={6}
-      bg="black"
-      color="white"
+      bg="white"
+      color="black"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}

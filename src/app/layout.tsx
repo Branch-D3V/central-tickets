@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
-import Script from "next/script";
 import { gilroy } from "@/components/ui/fonts";
 import MainLayout from "@/components/Layouts/Main";
 
@@ -24,9 +23,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        <Script src="https://api.marchabb.com/v1/js" strategy="lazyOnload" />
-      </head>
       <body
         className={gilroy.className}
         style={{

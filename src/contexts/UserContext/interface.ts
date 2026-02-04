@@ -1,4 +1,3 @@
-import { Insight } from "@/interfaces/Insight";
 import { User } from "@/interfaces/User/User";
 import { LoginSchemaType } from "@/schemas/loginSchema";
 
@@ -9,10 +8,8 @@ export interface UserContextProps {
   isLoadingLogin: boolean;
   isAuthenticated: boolean;
   isLoadingPages: boolean;
-  isLoadingInsight: boolean;
   isLoadingValidateToken: boolean;
   user: User;
-  insight: Insight;
 }
 
 export interface UserProviderProps {
