@@ -24,6 +24,7 @@ const UserContext = React.createContext<UserContextProps>({
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [requestLogin, isLoadingLogin] = useFetch<User>();
   const [requestValidateToken, isLoadingValidateToken] = useFetch<User>();
+  const [requestLogout] = useFetch<null>();
   const [isLoadingPages, setLoadingPages] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<User>(initialUser());
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
@@ -36,7 +37,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const handleUserState = (data: User) => {
     setUser(data);
-    handleSetCookies(data.token_access.token);
+    handleSetCookies(data.token);
   };
 
   const login = async (formData: LoginSchemaType) => {
@@ -55,6 +56,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       handleUserState(resp.data);
       setIsAuthenticated(true);
     }
+
     return resp?.data as User;
   };
 
@@ -69,15 +71,18 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         setLoadingPages(false);
       });
 
-    if (resp && resp.message === "Token ativo") {
+    if (resp && resp.message === "Token ativo" && resp.data) {
       setIsAuthenticated(true);
       setUser({ ...resp.data });
     }
   };
 
   const logout = async () => {
+    await requestLogout(`/api/auth/logout`, { method: "POST" }).catch(
+      () => null
+    );
     clearSession();
-    router.push("/");
+    router.push("/login");
   };
 
   const clearSession = () => {

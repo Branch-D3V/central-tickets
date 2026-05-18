@@ -80,6 +80,16 @@ export function SidebarComponent({}: SidebarComponentProps) {
                     <Text color={"#3B82F6"} fontWeight={600}>
                       Central de Tickets
                     </Text>
+                    {user.role && (
+                      <Text
+                        color={"#3B82F6"}
+                        fontWeight={500}
+                        fontSize={"12px"}
+                        textTransform={"uppercase"}
+                      >
+                        {user.role}
+                      </Text>
+                    )}
                   </Stack>
                 </Stack>
               </Drawer.Header>
@@ -126,10 +136,10 @@ export function SidebarComponent({}: SidebarComponentProps) {
                 >
                   <Stack gap="0">
                     <Text fontWeight={600} fontSize={"16px"} color={"#3B82F6"}>
-                      {user.nome || "Teste Segundo"}
+                      {user.nome || "Sem nome"}
                     </Text>
                     <Text color="fg.muted" textStyle="sm">
-                      {user.email || "teste@mail.com"}
+                      {user.email || "—"}
                     </Text>
                   </Stack>
                   <IconButton

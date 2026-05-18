@@ -1,16 +1,20 @@
 "use client";
 
-import { HStack, Stack, Text } from "@chakra-ui/react";
+import { HStack, Icon, Stack, Text } from "@chakra-ui/react";
 import { FormLoginProps } from "./interface";
-import { MdOutlineEmail, IoMdLogIn, IoMdPersonAdd } from "@/components/Icons";
+import {
+  MdOutlineEmail,
+  IoMdLogIn,
+  IoMdPersonAdd,
+  HiOutlineTicket,
+} from "@/components/Icons";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from "@/components/FormControl/Input";
 import InputPassword from "@/components/FormControl/InputPassword";
 import { loginSchema, LoginSchemaType } from "@/schemas/loginSchema";
 import ButtonAction from "@/components/Buttons/Action";
-import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { LinkComponent } from "@/components/Link";
 import React from "react";
 import { useUser } from "@/contexts/UserContext";
@@ -26,15 +30,13 @@ export default function FormLogin({}: FormLoginProps) {
 
   const { isAuthenticated, login, isLoadingLogin } = useUser();
 
-  const router = useRouter();
-
   const handleSubmitForm = async (data: LoginSchemaType) => {
     await login(data);
   };
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      redirect("/");
+      redirect("/dashboard");
     }
   }, [isAuthenticated]);
 
@@ -42,10 +44,10 @@ export default function FormLogin({}: FormLoginProps) {
     <Stack
       maxW={"500px"}
       w={"full"}
-      h={"360px"}
       bg="white"
-      borderRadius="10px"
-      p={{ base: 4, md: 8 }}
+      borderRadius="20px"
+      p={{ base: 6, md: 10 }}
+      gap={6}
       zIndex={10}
       align={"center"}
       justify={"space-evenly"}
@@ -53,26 +55,25 @@ export default function FormLogin({}: FormLoginProps) {
       as={"form"}
       onSubmit={handleSubmit(handleSubmitForm)}
     >
-      <HStack align={"center"} justify={"center"} mb={4}>
-        <Image
-          width={22}
-          height={22}
-          src="/assets/webp/xxx.webp"
-          alt="plug"
-          style={{ transform: "rotate(30deg)" }}
+      <HStack align={"center"} justify={"center"}>
+        <Icon
+          bg={"#3B82F6"}
+          as={HiOutlineTicket}
+          boxSize={12}
+          p={2.5}
+          borderRadius={"15px"}
+          color={"#FFFFFF"}
         />
-        <Text fontSize="2xl" fontWeight="bold" textAlign={"center"}>
-          Faça seu login
-        </Text>
-        <Image
-          width={22}
-          height={22}
-          src="/assets/webp/heart.webp"
-          alt="plug"
-          style={{ transform: "rotate(-30deg)" }}
-        />
+        <Stack gap={0}>
+          <Text fontSize="2xl" fontWeight={700} lineHeight={1}>
+            Central Tickets
+          </Text>
+          <Text color={"#3B82F6"} fontWeight={600} fontSize="14px">
+            Acesse sua conta
+          </Text>
+        </Stack>
       </HStack>
-      <Stack w={"full"}>
+      <Stack w={"full"} gap={3}>
         <Input
           error={errors.email}
           placeholder="E-mail"
@@ -80,19 +81,19 @@ export default function FormLogin({}: FormLoginProps) {
           {...register("email")}
         />
         <InputPassword
-          error={errors.senha}
+          error={errors.password}
           placeholder="Senha"
-          {...register("senha")}
+          {...register("password")}
         />
         <LinkComponent
-          fontSize={"16px"}
+          fontSize={"14px"}
           alignSelf={"end"}
-          color={"#FF0080"}
-          href={"/recuperacao"}
+          color={"#3B82F6"}
+          href={"#"}
           label="Esqueceu a senha?"
         />
       </Stack>
-      <Stack w={"full"}>
+      <Stack w={"full"} gap={3}>
         <ButtonAction
           borderRadius={"full"}
           w={"full"}
@@ -100,10 +101,10 @@ export default function FormLogin({}: FormLoginProps) {
           variant={"plain"}
           color={"white"}
           fontSize={"16px"}
-          bg={"#FF0080"}
+          bg={"#3B82F6"}
           loading={isLoadingLogin}
           _hover={{
-            bg: "#C30061",
+            bg: "#2563EB",
             transform: "translate(0px, -2px)",
           }}
           rightIcon={<IoMdLogIn />}
@@ -113,13 +114,12 @@ export default function FormLogin({}: FormLoginProps) {
         <ButtonAction
           borderRadius={"full"}
           w={"full"}
-          onClick={() => router.push("/cadastro")}
-          variant={"plain"}
+          variant={"outline"}
           fontSize={"16px"}
-          borderColor={"#FF0080"}
-          color={"#FF0080"}
+          borderColor={"#3B82F6"}
+          color={"#3B82F6"}
           _hover={{
-            borderColor: "#C30061",
+            borderColor: "#2563EB",
             transform: "translate(0px, -2px)",
           }}
           rightIcon={<IoMdPersonAdd />}

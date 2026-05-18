@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\pepeu\\\\Desktop\\\\Projects\\\\central-tickets\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(npx tsc *)",
+      "Bash(mkdir c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/dashboard c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/dashboard/insights c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/tickets \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/tickets/[id]\" \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/tickets/[id]/messages\")",
+      "Bash(mkdir c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/notifications \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/notifications/[id]\" c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/articles \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/articles/[id]\" c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/changelogs \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/changelogs/[id]\" c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/users c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/api/admin/users/import)",
+      "Bash(mkdir \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/tickets/[id]\" \"c:/Users/pepeu/Desktop/Projects/central-tickets/src/app/tickets/[id]/_components\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\pepeu\\Desktop\\Projects\\central-tickets\\src\\app\\api\\tickets",
+      "c:\\Users\\pepeu\\Desktop\\Projects\\central-tickets\\src\\app\\api\\admin\\notifications",
+      "c:\\Users\\pepeu\\Desktop\\Projects\\central-tickets\\src\\app\\tickets"
+    ]
+  }
+}
