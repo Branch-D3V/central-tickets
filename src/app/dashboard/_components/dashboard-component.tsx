@@ -1,4 +1,13 @@
-import { Badge, HStack, Link, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+"use client";
+
+import {
+  HStack,
+  Link,
+  SimpleGrid,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import {
   FaRegCircleCheck,
   FaRegClock,
@@ -6,40 +15,66 @@ import {
   TiTicket,
 } from "@/components/Icons";
 import { CardInfo } from "@/components/Cards/Info";
-import { tickets } from "@/data/ticket";
 import { CardTicket } from "@/components/Cards/Tickets/component";
+import useDashboardInsights from "@/hooks/useDashboardInsights/hook";
+import useTickets from "@/hooks/useTickets/hook";
+import React from "react";
+import { useRouter } from "next/navigation";
+import { toaster } from "@/components/ui/toaster";
 
 export default function DashboardComponent() {
+  const router = useRouter();
+  const {
+    fetchInsights,
+    data: insights,
+    isLoading: isLoadingInsights,
+  } = useDashboardInsights();
+  const { list, listTickets, isLoadingList } = useTickets();
+
+  React.useEffect(() => {
+    fetchInsights().catch(({ message }) => {
+      toaster.create({ description: message, type: "error", closable: true });
+    });
+    listTickets({ per_page: 5 }).catch(({ message }) => {
+      toaster.create({ description: message, type: "error", closable: true });
+    });
+  }, []);
+
+  const total = insights?.total ?? 0;
+  const open = insights?.open ?? 0;
+  const inProgress = insights?.in_progress ?? 0;
+  const closed = insights?.closed ?? 0;
+
   return (
     <Stack w={"full"} h={"full"} gap={6}>
       <SimpleGrid columns={{ base: 2, md: 4 }} gap={{ base: 2, md: 4 }}>
         <CardInfo
           title="Total"
           color={"#3B82F6"}
-          value={"34"}
+          value={isLoadingInsights ? "—" : String(total)}
           iconBg="#E0F2FE"
           icon={<TiTicket size={22} />}
           description="Tickets criados"
         />
         <CardInfo
-          title="Pendentes"
-          value={"0"}
+          title="Abertos"
+          value={isLoadingInsights ? "—" : String(open)}
           iconBg="#FBFAC1"
           color={"#B68B2C"}
           icon={<FaRegClock size={22} />}
           description="Aguardando resposta"
         />
         <CardInfo
-          title="Ativo"
-          value={"0"}
+          title="Em andamento"
+          value={isLoadingInsights ? "—" : String(inProgress)}
           iconBg="#F4E7FF"
           color={"#9634E6"}
           icon={<FiZap size={22} />}
-          description="Em andamento"
+          description="Sendo tratados"
         />
         <CardInfo
           title="Resolvidos"
-          value={"1"}
+          value={isLoadingInsights ? "—" : String(closed)}
           iconBg="#D4FFE0"
           color={"#22A273"}
           icon={<FaRegCircleCheck size={22} />}
@@ -64,10 +99,31 @@ export default function DashboardComponent() {
             Ver todos
           </Link>
         </HStack>
-        <Stack px={{ base: 2, md: 6 }} py={4}>
-          {tickets.map((ticket, index) => (
-            <CardTicket key={index} ticket={ticket} />
-          ))}
+        <Stack px={{ base: 2, md: 6 }} py={4} gap={3}>
+          {isLoadingList && (
+            <Stack align="center" py={6}>
+              <Spinner size="md" color="#3B82F6" />
+            </Stack>
+          )}
+          {!isLoadingList && list && list.length === 0 && (
+            <Text textAlign="center" color="#847F83" py={6}>
+              Nenhum ticket por aqui ainda.
+            </Text>
+          )}
+          {!isLoadingList &&
+            list &&
+            list.length > 0 &&
+            list
+              .slice(0, 5)
+              .map((ticket) => (
+                <CardTicket
+                  key={ticket.id}
+                  ticket={ticket}
+                  cursor="pointer"
+                  _hover={{ borderColor: "#3B82F6" }}
+                  onClick={() => router.push(`/tickets/${ticket.id}`)}
+                />
+              ))}
         </Stack>
       </Stack>
     </Stack>

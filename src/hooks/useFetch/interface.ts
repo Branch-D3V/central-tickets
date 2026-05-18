@@ -1,8 +1,8 @@
 export interface Options {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   headers?: HeadersInit;
-  body?: Record<string, unknown> | FormData;
-  params?: Record<string, unknown>;
+  body?: object | FormData;
+  params?: object;
 }
 
 export interface FetchResponse<T> {
