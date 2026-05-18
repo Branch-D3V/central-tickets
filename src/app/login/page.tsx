@@ -16,7 +16,7 @@ export default function LoginPage() {
     >
       <FormLogin />
       <Text fontSize="12px" color="#847F83">
-        Central Tickets &copy; {new Date().getFullYear()}
+        Hub do Operador &copy; {new Date().getFullYear()}
       </Text>
     </Stack>
   );

@@ -78,7 +78,7 @@ export function SidebarComponent({}: SidebarComponentProps) {
                       Olá, {user.nome ? user.nome?.split(" ")[0] : "Operador"}!
                     </Drawer.Title>
                     <Text color={"#3B82F6"} fontWeight={600}>
-                      Central de Tickets
+                      Hub do Operador
                     </Text>
                     {user.role && (
                       <Text

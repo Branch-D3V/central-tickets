@@ -79,7 +79,7 @@ export default function NotificationsComponent() {
 
   React.useEffect(() => {
     load();
-  }, [load]);
+  }, []);
 
   const handleReadOne = async (id: number) => {
     await markAsRead(id)

@@ -66,7 +66,7 @@ export default function FormLogin({}: FormLoginProps) {
         />
         <Stack gap={0}>
           <Text fontSize="2xl" fontWeight={700} lineHeight={1}>
-            Central Tickets
+            Hub do Operador
           </Text>
           <Text color={"#3B82F6"} fontWeight={600} fontSize="14px">
             Acesse sua conta

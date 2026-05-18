@@ -58,7 +58,7 @@ export default function TicketsListComponent() {
 
   React.useEffect(() => {
     load(filters);
-  }, [filters, load]);
+  }, [filters]);
 
   const handleFilter =
     (key: keyof ListTicketsParams) =>

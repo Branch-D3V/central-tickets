@@ -107,7 +107,7 @@ export default function TicketDetailComponent({ id }: TicketDetailProps) {
 
   React.useEffect(() => {
     load();
-  }, [load]);
+  }, []);
 
   if (isLoadingDetail && !detail) {
     return (

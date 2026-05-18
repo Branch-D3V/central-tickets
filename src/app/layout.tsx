@@ -4,11 +4,11 @@ import { gilroy } from "@/components/ui/fonts";
 import MainLayout from "@/components/Layouts/Main";
 
 export const metadata: Metadata = {
-  title: "Central Tickets",
+  title: "Hub do Operador",
   icons: {
     icon: "/support-ticket.png",
   },
-  description: "Central Tickets - Sistema de Gestão de Tickets de Suporte",
+  description: "Hub do Operador - Sistema de Gestão de Tickets de Suporte",
   other: {
     "x-developed-by": "Dev LSeyth",
     "x-project": "central-tickets",
