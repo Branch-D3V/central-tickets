@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 
 const STATUS_OPTIONS = [
+  { value: "", label: "Todos" },
   { value: "open", label: "Aberto" },
   { value: "in_progress", label: "Em andamento" },
   { value: "waiting_operator", label: "Aguardando operador" },
@@ -25,12 +26,14 @@ const STATUS_OPTIONS = [
 ];
 
 const PRIORITY_OPTIONS = [
+  { value: "", label: "Todos" },
   { value: "high", label: "Alta" },
   { value: "medium", label: "Média" },
   { value: "low", label: "Baixa" },
 ];
 
 const TYPE_OPTIONS = [
+  { value: "", label: "Todos" },
   { value: "technical", label: "Técnico" },
   { value: "financial", label: "Financeiro" },
   { value: "operational", label: "Operacional" },
