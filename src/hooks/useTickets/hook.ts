@@ -2,6 +2,7 @@
 
 import useFetch from "@/hooks/useFetch/hook";
 import {
+  Attachment,
   CreateTicketPayload,
   SendTicketMessagePayload,
   Ticket,
@@ -24,6 +25,8 @@ export function useTickets() {
   const [requestDetail, isLoadingDetail, detail] = useFetch<Ticket>();
   const [requestUpdate, isLoadingUpdate] = useFetch<Ticket>();
   const [requestSendMessage, isLoadingSendMessage] = useFetch<TicketMessage>();
+  const [requestUploadAttachments, isLoadingUploadAttachments] =
+    useFetch<Attachment[]>();
 
   const listTickets = (params?: ListTicketsParams) =>
     requestList("/api/tickets", { method: "GET", params });
@@ -46,6 +49,22 @@ export function useTickets() {
       body: payload,
     });
 
+  const uploadAttachments = (
+    id: number | string,
+    files: File[],
+    messageId?: number
+  ) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files[]", file));
+    if (messageId !== undefined) {
+      formData.append("message_id", String(messageId));
+    }
+    return requestUploadAttachments(`/api/tickets/${id}/attachments`, {
+      method: "POST",
+      body: formData,
+    });
+  };
+
   return {
     list,
     detail,
@@ -55,11 +74,13 @@ export function useTickets() {
     isLoadingCreate,
     isLoadingUpdate,
     isLoadingSendMessage,
+    isLoadingUploadAttachments,
     listTickets,
     createTicket,
     getTicket,
     updateTicket,
     sendMessage,
+    uploadAttachments,
   };
 }
 

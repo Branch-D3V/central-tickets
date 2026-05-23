@@ -18,30 +18,49 @@ export interface TicketTag {
   color?: string;
 }
 
-export interface TicketMessage {
+export interface TicketUserRef {
+  id: number;
+  nome: string;
+  role?: string;
+}
+
+export interface Attachment {
   id: number;
   ticket_id: number;
-  user_id: number;
+  message_id: number | null;
+  uploader_id: number;
+  original_name: string;
+  mime_type: string;
+  size_bytes: number;
+  is_image: boolean;
+  download_url: string;
+  created_at: string;
+}
+
+export interface TicketMessage {
+  id: number;
+  ticket_id?: number;
+  user_id?: number;
   body: string;
   internal?: boolean;
   created_at: string;
-  author?: {
-    id: number;
-    nome: string;
-    role: string;
-  };
+  author?: TicketUserRef;
+  attachments?: Attachment[];
+}
+
+export interface TicketActivityProperties {
+  message_id?: number | null;
+  attachments_count?: number;
+  [key: string]: unknown;
 }
 
 export interface TicketActivity {
   id: number;
-  ticket_id: number;
+  ticket_id?: number;
   action: string;
-  meta?: Record<string, unknown>;
+  properties?: TicketActivityProperties | null;
   created_at: string;
-  user?: {
-    id: number;
-    nome: string;
-  };
+  causer?: TicketUserRef | null;
 }
 
 export interface Ticket {
@@ -54,12 +73,14 @@ export interface Ticket {
   created_at: string;
   updated_at?: string;
   due_at?: string | null;
-  tag_ids?: number[];
+  closed_at?: string | null;
+  user?: TicketUserRef | null;
+  assignee?: TicketUserRef | null;
   tags?: TicketTag[];
   messages?: TicketMessage[];
   activities?: TicketActivity[];
-  assignee_id?: number | null;
-  requester_id?: number;
+  attachments?: Attachment[];
+  messages_count?: number | null;
 }
 
 export interface CreateTicketPayload {

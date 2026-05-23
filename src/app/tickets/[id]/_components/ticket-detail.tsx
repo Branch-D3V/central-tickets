@@ -4,11 +4,13 @@ import {
   Badge,
   Box,
   Checkbox,
+  Dialog,
   Grid,
   GridItem,
   HStack,
   Icon,
   IconButton,
+  Portal,
   Spinner,
   Stack,
   Text,
@@ -28,13 +30,16 @@ import Select from "@/components/FormControl/Select";
 import Input from "@/components/FormControl/Input";
 import ButtonAction from "@/components/Buttons/Action";
 import {
+  FaRegImage,
   FiChevronLeft,
   HiOutlineTicket,
   IoMdLogIn,
+  MdFileUpload,
 } from "@/components/Icons";
 import { useRouter } from "next/navigation";
 import { toaster } from "@/components/ui/toaster";
 import {
+  Attachment,
   Ticket,
   TicketActivity,
   TicketMessage,
@@ -238,6 +243,11 @@ export default function TicketDetailComponent({ id }: TicketDetailProps) {
       <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={4}>
         <GridItem>
           <Stack gap={4}>
+            <AttachmentsSection
+              ticketId={ticket.id}
+              attachments={ticket.attachments ?? []}
+            />
+
             <MessagesSection
               messages={ticket.messages ?? []}
               canSeeInternal={canManage}
@@ -429,6 +439,18 @@ function MessagesSection({
   );
 }
 
+const ACTIVITY_ACTION_LABEL: Record<string, string> = {
+  ticket_created: "Ticket criado",
+  ticket_updated: "Ticket atualizado",
+  status_changed: "Status alterado",
+  priority_changed: "Prioridade alterada",
+  message_added: "Mensagem adicionada",
+  attachment_uploaded: "Anexo enviado",
+  ticket_closed: "Ticket fechado",
+  ticket_reopened: "Ticket reaberto",
+  ticket_assigned: "Ticket atribuído",
+};
+
 function ActivitiesSection({ activities }: { activities: TicketActivity[] }) {
   if (!activities || activities.length === 0) return null;
 
@@ -444,26 +466,219 @@ function ActivitiesSection({ activities }: { activities: TicketActivity[] }) {
         Atividades
       </Text>
       <Stack gap={2}>
-        {activities.map((a) => (
-          <HStack
-            key={a.id}
-            gap={3}
-            align="flex-start"
-            borderLeft="2px solid #3B82F6"
-            pl={3}
-          >
-            <Stack gap={0} flex={1}>
-              <Text fontSize="14px" color="#1F2937">
-                <b>{a.user?.nome ?? "Sistema"}</b> — {a.action}
-              </Text>
-              <Text fontSize="12px" color="#847F83">
-                {dayjs(a.created_at).format("DD/MM/YYYY HH:mm")}
-              </Text>
-            </Stack>
-          </HStack>
-        ))}
+        {activities.map((a) => {
+          const label = ACTIVITY_ACTION_LABEL[a.action] ?? a.action;
+          const attachmentsCount = a.properties?.attachments_count;
+          return (
+            <HStack
+              key={a.id}
+              gap={3}
+              align="flex-start"
+              borderLeft="2px solid #3B82F6"
+              pl={3}
+            >
+              <Stack gap={0} flex={1}>
+                <Text fontSize="14px" color="#1F2937">
+                  <b>{a.causer?.nome ?? "Sistema"}</b> — {label}
+                  {typeof attachmentsCount === "number" && attachmentsCount > 0
+                    ? ` (${attachmentsCount} anexo${
+                        attachmentsCount === 1 ? "" : "s"
+                      })`
+                    : ""}
+                </Text>
+                <Text fontSize="12px" color="#847F83">
+                  {dayjs(a.created_at).format("DD/MM/YYYY HH:mm")}
+                </Text>
+              </Stack>
+            </HStack>
+          );
+        })}
       </Stack>
     </Stack>
+  );
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function AttachmentsSection({
+  ticketId,
+  attachments,
+}: {
+  ticketId: number;
+  attachments: Attachment[];
+}) {
+  const [preview, setPreview] = React.useState<Attachment | null>(null);
+
+  if (!attachments || attachments.length === 0) return null;
+
+  const proxyUrl = (att: Attachment) =>
+    `/api/tickets/${ticketId}/attachments/${att.id}`;
+
+  return (
+    <>
+      <Stack
+        border="1px solid #D9D9D9"
+        borderRadius="20px"
+        bg="white"
+        p={{ base: 4, md: 6 }}
+        gap={3}
+      >
+        <Text fontWeight={600} fontSize="16px">
+          Anexos ({attachments.length})
+        </Text>
+
+        <Grid
+          templateColumns={{
+            base: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
+          gap={3}
+        >
+          {attachments.map((att) => {
+            const url = proxyUrl(att);
+            const isImage = att.is_image;
+
+            return (
+              <Stack
+                key={att.id}
+                border="1px solid #E5E7EB"
+                borderRadius="12px"
+                overflow="hidden"
+                bg="#F9FAFB"
+                gap={0}
+                cursor="pointer"
+                _hover={{ borderColor: "#3B82F6" }}
+                onClick={() => {
+                  if (isImage) {
+                    setPreview(att);
+                  } else {
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  }
+                }}
+              >
+                <Box
+                  h="120px"
+                  w="full"
+                  bg={isImage ? "#000" : "#EEF2FF"}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  overflow="hidden"
+                >
+                  {isImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={url}
+                      alt={att.original_name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <Icon as={MdFileUpload} boxSize={10} color="#3B82F6" />
+                  )}
+                </Box>
+                <Stack gap={0} p={2}>
+                  <Text fontSize="12px" fontWeight={500} truncate>
+                    {att.original_name}
+                  </Text>
+                  <Text fontSize="11px" color="#847F83">
+                    {formatBytes(att.size_bytes)}
+                  </Text>
+                </Stack>
+              </Stack>
+            );
+          })}
+        </Grid>
+      </Stack>
+
+      <Dialog.Root
+        open={preview !== null}
+        onOpenChange={(e) => {
+          if (!e.open) setPreview(null);
+        }}
+        size="xl"
+      >
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content borderRadius="16px" overflow="hidden">
+              <Dialog.Header>
+                <HStack justify="space-between" w="full" gap={2}>
+                  <HStack gap={2} minW={0}>
+                    <Icon as={FaRegImage} color="#3B82F6" />
+                    <Dialog.Title
+                      fontSize="14px"
+                      fontWeight={600}
+                      truncate
+                      maxW="500px"
+                    >
+                      {preview?.original_name}
+                    </Dialog.Title>
+                  </HStack>
+                  <IconButton
+                    aria-label="Fechar"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setPreview(null)}
+                  >
+                    <FiChevronLeft />
+                  </IconButton>
+                </HStack>
+              </Dialog.Header>
+              <Dialog.Body p={0} bg="#000">
+                {preview && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={proxyUrl(preview)}
+                    alt={preview.original_name}
+                    style={{
+                      width: "100%",
+                      maxHeight: "70vh",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                )}
+              </Dialog.Body>
+              <Dialog.Footer>
+                <HStack justify="space-between" w="full">
+                  <Text fontSize="12px" color="#847F83">
+                    {preview ? formatBytes(preview.size_bytes) : ""}
+                  </Text>
+                  <ButtonAction
+                    type="button"
+                    variant="plain"
+                    bg="#3B82F6"
+                    color="white"
+                    borderRadius="full"
+                    _hover={{ bg: "#2563EB" }}
+                    onClick={() => {
+                      if (preview) {
+                        window.open(
+                          proxyUrl(preview),
+                          "_blank",
+                          "noopener,noreferrer"
+                        );
+                      }
+                    }}
+                  >
+                    Baixar
+                  </ButtonAction>
+                </HStack>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    </>
   );
 }
 
